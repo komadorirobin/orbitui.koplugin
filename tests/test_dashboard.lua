@@ -706,6 +706,48 @@ H.test("ongoing display picker, selection and opening stay local to the book car
     package.loaded["ui/widget/widget"], package.loaded["ui/widget/buttondialog"] = old_widget, old_dialog
 end)
 
+H.test("focus and fan show the straight row's pet stats and open Silverfish from the numbers", function()
+    local Silverfish = require("adapters/orbitui_silverfish")
+    local snapshot, sprite, open = Silverfish.snapshot, Silverfish.spriteWidget, Silverfish.openPet
+    local pet = { name = "Franz", stage = "Ash Cat · Kitten", days = 28, finished = 0, generation = 2 }
+    local opened_pet
+    Silverfish.snapshot = function() return pet end
+    Silverfish.spriteWidget = function(_, w, h) return Widget:new{ dimen = { w = w, h = h } } end
+    Silverfish.openPet = function(value) opened_pet = value end
+    local data = Dashboard.readData(ctx)
+    data.layout, data.featured = "cover_row", { data.current }
+    for _, style in ipairs({ "focus", "fan" }) do
+        data.config.ongoing_style = style
+        for _, name in ipairs({ "Franz", string.rep("Long name ", 24) }) do
+            pet.name = name
+            local view = View.build(600, 730, ctx, data)
+            view.dimen.x, view.dimen.y = 0, 0
+            local label, stats
+            for _, group in ipairs(view[1]) do
+                for _, child in ipairs(group) do
+                    if child.text == name .. "   " .. pet.stage then label = child end
+                    if child.text == "Days: 28 · Books: 0 · Gen: 2" then stats = child end
+                end
+            end
+            assert(label and stats)
+            local x, y = stats.overlap_offset[1], stats.overlap_offset[2]
+            if name == "Franz" then
+                assert(label.overlap_offset[1] + label:getSize().w < x)
+                H.eq(x + stats:getSize().w, view._plan.ladder.x + view._plan.ladder.w - view._plan.pad)
+            else
+                assert(label.overlap_offset[2] + label:getSize().h <= y)
+                H.eq(x, label.overlap_offset[1])
+            end
+            assert(y + stats:getSize().h <= view._plan.ladder.y + view._plan.ladder.h - view._plan.pad)
+            opened_pet = nil
+            assert(view:onDashboardTap(nil, { pos = { x = x + 1, y = y + 1 } }))
+            H.eq(opened_pet, pet)
+            view:free()
+        end
+    end
+    Silverfish.snapshot, Silverfish.spriteWidget, Silverfish.openPet = snapshot, sprite, open
+end)
+
 H.test("both card styles fit empty and populated dashboards without changing other card positions", function()
     local old = package.loaded["ui/widget/widget"]
     package.loaded["ui/widget/widget"] = Widget
@@ -754,7 +796,7 @@ H.test("wide focus cards use the right edge and fan jackets stay gently tilted a
         end,
         swipe = function(area) art = area end,
         rule = function(_, y) rules[#rules + 1] = y end,
-        pet = { name = "Pet", stage = "Kitten" }, sprite = ignore, openPet = ignore,
+        pet = { name = "Pet", stage = "Kitten", generation = 1 }, sprite = ignore, openPet = ignore,
         bar = ignore, action = ignore, bookAction = ignore, button = ignore,
     }
     local data = { featured = {}, config = {} }

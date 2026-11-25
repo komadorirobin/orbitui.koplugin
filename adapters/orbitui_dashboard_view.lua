@@ -613,8 +613,7 @@ function M.content(widget, p, ctx, data)
                 end
                 rightLabel(pet.name, y, pet_name_size, true)
                 rightLabel(pet.stage, y + name_h + line_gap, pet_detail_size)
-                rightLabel(string.format(_("Days: %s · Books: %s · Gen: %s"),
-                    pet.days or "—", pet.finished or "—", pet.generation), bottom - detail_h, pet_detail_size)
+                rightLabel(Silverfish.formatStats(pet), bottom - detail_h, pet_detail_size)
                 add(Silverfish.spriteWidget(pet, sprite_w, footer_h, paper), right - sprite_w, y)
                 action(rect(pet_x, footer_y, right - pet_x, bottom - footer_y), function() Silverfish.openPet(pet) end)
             end
@@ -705,8 +704,7 @@ function M.content(widget, p, ctx, data)
                     if label then label.overlap_offset[1] = tx - math.min(tx - other_x, label:getSize().w) end
                 end
                 rightLabel(pet.name .. "  " .. pet.stage, foot_y + px(6), 13, true)
-                rightLabel(string.format(_("Days: %s · Books: %s · Gen: %s"),
-                    pet.days or "—", pet.finished or "—", pet.generation), foot_y + px(25), 14)
+                rightLabel(Silverfish.formatStats(pet), foot_y + px(25), 14)
                 add(Silverfish.spriteWidget(pet, sprite_w, foot_h - px(5), paper), right - sprite_w, foot_y + px(5))
                 action(rect(other_x, foot_y, right - other_x, foot_h), function() Silverfish.openPet(pet) end)
             end

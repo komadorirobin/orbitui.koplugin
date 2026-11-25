@@ -122,6 +122,33 @@ local function drawCompanions(v, area, books, index, title_captions, caption_siz
     return true
 end
 
+local function drawPetFooter(v, left, width, top, bottom, gap)
+    local pet = v.pet
+    if not pet or bottom - top < v.px(125) then return bottom end
+
+    local sprite_size = min(v.px(30), floor((bottom - top) * .14))
+    local x = left + sprite_size + gap
+    local text_w = width - sprite_size - gap
+    local identity = pet.name .. "   " .. pet.stage
+    local stats = require("adapters/orbitui_silverfish").formatStats(pet)
+    local stats_w = v.textWidth(stats, 13, false)
+    local name_h, stats_h = v.line(13, true), v.line(13, false)
+    local stacked = v.textWidth(identity, 13, true) + gap + stats_w > text_w
+    local h = max(sprite_size, stacked and name_h + stats_h or max(name_h, stats_h))
+    local y = bottom - h
+    v.rule(left, y - gap, width)
+    v.sprite(pet, sprite_size, left, y + floor((h - sprite_size) / 2))
+    if stacked then
+        v.text(identity, x, y, text_w, 13, true)
+        v.text(stats, x, bottom - stats_h, text_w, 13, false)
+    else
+        v.text(identity, x, y + floor((h - name_h) / 2), text_w - stats_w - gap, 13, true)
+        v.text(stats, left + width - stats_w, y + floor((h - stats_h) / 2), stats_w, 13, false)
+    end
+    v.action(rect(left, y - gap, width, h + gap), function() v.openPet(pet) end)
+    return y - 2 * gap
+end
+
 function M.draw(v, r, data, selected, selectBook)
     local books = data.featured
     local px, text = v.px, v.text
@@ -138,17 +165,7 @@ function M.draw(v, r, data, selected, selectBook)
     v.action(rect(right - see_w, r.y, see_w + v.pad, top + header_h - r.y), v.seeAll)
     v.rule(left, top + header_h, width)
     top = top + header_h + gap
-    local pet = v.pet
-    if pet and bottom - top >= px(125) then
-        local foot_h = min(px(30), floor((bottom - top) * .14))
-        local y = bottom - foot_h
-        v.rule(left, y - gap, width)
-        v.sprite(pet, foot_h, left, y)
-        text(pet.name .. "   " .. pet.stage, left + foot_h + gap, y + max(0, floor((foot_h - v.line(13, true)) / 2)),
-            width - foot_h - gap, 13, true)
-        v.action(rect(left, y - gap, width, foot_h + gap), function() v.openPet(pet) end)
-        bottom = y - gap * 2
-    end
+    bottom = drawPetFooter(v, left, width, top, bottom, gap)
     if #books == 0 then
         text(_("Open a book to start reading."), left, top, width, 15, false, v.muted, 2)
         return
