@@ -20,6 +20,23 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
+## Local library and dock candidate, 2026-11-25
+
+Holding a dock destination can make it the startup view. Native Home, file
+browser, history and favorites use KOReader's own startup choices. A shelf,
+collection, configured folder or custom screen uses its existing dock action.
+An explicit book launch takes precedence. A missing custom dock target falls
+back to Home on the next normal launch. The existing dock order and the default
+startup choice are preserved.
+
+Folder shelves reuse the last two eligible metadata-based orderings across
+pages. Reading-dependent orders and active filters remain live. A tap on the
+visible first Home page skips its navigation rebuild. Detailed lists share
+font-face line measurements and upright spine titles reuse decoded characters.
+The opt-in performance report times visible shelf content, cover artwork and
+the next input tick, including switches directly between shelves. See the
+physical HiBreak results in [Testing](TESTING.md).
+
 ## OrbitUI 1.5.0-beta.4, 2026-11-25
 
 Holding a Reading dashboard card opens its usual menu with a **Replace module…**

@@ -1,5 +1,53 @@
 # Verification and device acceptance
 
+## 2026-11-25 — Folder shelves, Home, dock startup and timing on a HiBreak
+
+The local runtime at `372ece9d7` was installed over USB. The tested archive
+SHA-256 is `80e11dd0803363f683f2d55f8a11985d126ab93e1f6585c54078433afcaa28c0`.
+The comparison build was the published 1.5.0-beta.4. Both used the same Swedish
+configuration, existing library, open tabs and display settings.
+
+| Dock gesture | Published beta, median | Candidate, median |
+| --- | ---: | ---: |
+| Home to Library, first visit after launch | 1.79 s | 1.22 s |
+| Library to Manga, first visit | 3.57 s | 2.30 s |
+| Manga back to Library | 0.18 s | 0.20 s |
+| Library to Manga, second direct switch | 6.12 s | 6.53 s |
+| Home to Manga, subsequent visit | 0.35 s | 0.31 s |
+
+Each column uses three launches. The candidate rounds cover the initial
+implementation and the final series-art correction. Device-side tap timestamps
+were matched to Android screen-record frames showing the destination tabs and
+populated shelves. The physical e-ink refresh adds its own delay. Device and
+metadata caches stayed in place. The second direct Manga switch varied from
+0.36 to 6.86 seconds on the published beta. These trials establish the remaining
+delay but do not establish a general percentage speedup. Two unrelated control
+transitions without an unambiguous source and destination were excluded.
+
+On the final build the six sampled shelf entries all recorded visible content,
+a real cover and a usable touch target. On first entry the internal view-open
+to cover/input timings were 1.25/1.27 s for Library and 2.26/2.29 s for Manga.
+Input readiness is the next event-loop turn with the painted target still in
+the foreground. Holding a Manga box separately opened its menu. These checks
+also caught a missing cover measurement for series boxes and inconsistent
+ownership records when the two styles evicted each other's cached images.
+
+In a separate LuaJIT benchmark, three consecutive 20-book windows of a
+2,000-book library in 20 folders took a median of 85 ms before and 31 ms after
+(nine runs per build). The grouping ran three times before and once after.
+The same 60 books appeared in the same order. The font test made two native
+height measurements for 200 requests across two faces. The Japanese title
+suite covered Latin runs, invisible characters and vertical punctuation.
+
+Physical gesture checks confirmed that the existing Manga shortcut offered
+**Använd som startvy** alongside its edit and library-menu actions. Restarting
+opened Manga. A second tap on Home page one kept the same Home instance.
+Swiping to page two and tapping Home returned to page one. The original Home
+startup selection was restored. The Lua and LuaJIT suites passed, including
+621 Bookshelf suites with three runtime-specific skips. The Python checks
+reported 135 tests with four optional skips. Local evidence is under
+`test-results/cyberui-kobold-zen-20261125/`.
+
 ## 2026-11-25 — Bookshelf and SimpleUI upstream merge
 
 The packaged plugin ran in Swedish KOReader on an emulated Tolino Vision Color.
