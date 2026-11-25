@@ -20,7 +20,7 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Main since 1.5.0-beta.3
+## OrbitUI 1.5.0-beta.4, 2026-11-25
 
 Holding a Reading dashboard card opens its usual menu with a **Replace module…**
 action. The picker offers **BookOrbit achievements** on its first screen and

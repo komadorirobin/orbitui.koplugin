@@ -1,5 +1,15 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.5.0-beta.4
+
+Long-press a Reading dashboard card to open its usual menu and choose
+**Replace module…**. BookOrbit achievements appear on the first picker screen.
+The Day Mode action defaults to the Solar Colour sun and has its own icon
+setting. Bookshelf search matches uppercase and lowercase accented and Cyrillic
+letters. Finished-book counts distinguish files that share a partial checksum,
+including when a book is moved. Enable **Include preview releases** under
+**OrbitUI → System & maintenance → Updates** to receive the beta.
+
 ## OrbitUI 1.5.0-beta.3
 
 Published on 2026-11-24T21:20:29Z as GitHub prerelease 457345358
