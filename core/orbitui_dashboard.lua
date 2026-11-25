@@ -346,6 +346,7 @@ function M.config(raw, legacy)
         end
     end
     if raw.goal == "local" or raw.goal == "hardcover" then result.goal = raw.goal end
+    if raw.ongoing_style == "focus" or raw.ongoing_style == "fan" then result.ongoing_style = raw.ongoing_style end
     local count = raw.cover_row_count
     if type(count) == "number" and count >= 1 and count <= M.cover_row_max and count == math.floor(count) then
         result.cover_row_count = count

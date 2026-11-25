@@ -350,6 +350,36 @@ local function pickerSheet(pfx, ctx)
     return panel
 end
 
+-- Keep the presentation independent of both the dashboard arrangement and the book list.
+function M.presentationItem(pfx, applied)
+    local title = _("Ongoing book display")
+    return { text = title, keep_menu_open = true, callback = function()
+        local ui = require("ui/uimanager")
+        local config = dashboard().readConfig(pfx)
+        if config.unsupported then return end
+        local layout = dashboard().layout(pfx)
+        local original = ({ cover_row = "Straight cover row", cover_stairs = "Cover staircase" })[layout] or "Classic"
+        local current = config.ongoing_style or "default"
+        local dialog, buttons = nil, {}
+        for _i, choice in ipairs({ { "default", original }, { "focus", "Book in focus" }, { "fan", "Cover fan" } }) do
+            local id = choice[1]
+            buttons[#buttons + 1] = {{ text = (current == id and "●  " or "○  ") .. _(choice[2]),
+                callback = function()
+                    ui:close(dialog)
+                    if id == current then return end
+                    dashboard().editConfig(pfx, function(c)
+                        c.ongoing_style = id ~= "default" and id or nil
+                    end, function()
+                        if applied then applied() end
+                    end)
+                end }}
+        end
+        dialog = require("ui/widget/buttondialog"):new{ title = title, buttons = buttons,
+            _sui_keep_homescreen = true }
+        ui:show(dialog)
+    end }
+end
+
 local function replacementItem(pfx, ctx, id, on_replaced)
     return { text = _("Replace module…"), callback = function()
         return M.showReplacement(pfx, ctx, id, on_replaced)
@@ -495,6 +525,13 @@ function M.show(pfx, ctx, id)
         local items = M.items(refresh, pfx, require("engines/sui_window").makeCtxMenu(menu_ctx))
         if not dashboard().readConfig(pfx).unsupported then table.insert(items, 1, dashboard().layoutItem(refresh, pfx)) end
         if replace then table.insert(items, 1, replace) end
+        if id == "hero" and not dashboard().readConfig(pfx).unsupported then
+            table.insert(items, 1, M.presentationItem(pfx, function()
+                changed = false
+                win:close()
+                if ctx.refresh_fn then ctx.refresh_fn(true) end
+            end))
+        end
         return items
     end } }}, { pfx = pfx or "simpleui_hs_", pfx_qa = (pfx or "simpleui_hs_") .. "qa_" })
     return win
@@ -570,7 +607,7 @@ function M.items(refresh, pfx, ctx_menu)
     }
     local layout = dashboard().layout(pfx)
     local cover_layout = Model.isCoverLayout(layout)
-    if layout == "cover_row" then
+    if layout == "cover_row" or config.ongoing_style then
         local function option(key, value, label)
             return { text = label, radio = true, keep_menu_open = true, checked_func = function()
                 return dashboard().readConfig(pfx)[key] == value
@@ -578,7 +615,7 @@ function M.items(refresh, pfx, ctx_menu)
                 dashboard().editConfig(pfx, function(c) c[key] = value end, refresh)
             end }
         end
-        items[#items + 1] = { text = _("Straight cover row"), sub_item_table_func = function()
+        items[#items + 1] = { text = _(config.ongoing_style and "Books in progress" or "Straight cover row"), sub_item_table_func = function()
             local counts = {}
             for count = 1, Model.cover_row_max do
                 counts[count] = option("cover_row_count", count, tostring(count))

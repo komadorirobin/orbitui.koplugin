@@ -22,6 +22,13 @@ and correct this file in the same change.
 
 ## Local library and dock candidate, 2026-11-25
 
+The native dashboard book card has two optional presentations, Book in focus
+and Cover fan. The `ongoing_style` setting belongs to the screen's dashboard
+configuration. A long press on the card or its covers offers the picker.
+Selection within the card is temporary. Cover loading, opening, and native
+book actions use Home's existing providers.
+
+
 Holding a dock destination can make it the startup view. Native Home, file
 browser, history and favorites use KOReader's own startup choices. A shelf,
 collection, configured folder or custom screen uses its existing dock action.

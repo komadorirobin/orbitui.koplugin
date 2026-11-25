@@ -2,6 +2,7 @@
 -- already at 2,000 files. Keep exact source in this existing registry, compiled
 -- lazily by the canonical loader. This explicit list also controls export-ignore.
 local embedded_names = {
+    "adapters/orbitui_ongoing_display",
     "adapters/orbitui_fingertips", "orbitui/fingertips/main", "orbitui/fingertips/actions",
     "orbitui/fingertips/arrange", "orbitui/fingertips/bar", "orbitui/fingertips/panel",
     "infra/sui_compat_check", "infra/sui_updater",
@@ -50,6 +51,7 @@ local embedded_names = {
     "features/library/cover_editor/sui_cover_window",
 }
 local map = {
+    ["adapters/orbitui_ongoing_display"] = "adapters/orbitui_ongoing_display.lua",
     ["adapters/orbitui_fingertips"] = "adapters/orbitui_fingertips.lua",
     ["orbitui/fingertips/main"] = "components/fingertips/main.lua",
     ["orbitui/fingertips/actions"] = "components/fingertips/fingertips_actions.lua",

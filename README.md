@@ -159,6 +159,10 @@ Library roots and configured scan depth determine coverage.
 
 On a fresh install, the setup guide preselects **Reading dashboard** with
 **Straight cover row**. Review and apply to add it as the first Home page.
+Hold the ongoing-books card and choose **Ongoing book display** to switch between
+its original layout, **Book in focus** and **Cover fan**. Tap a smaller cover to
+preview that book, then tap **Read on** or the featured cover to open it. Swipe
+across the fan to browse. The choice is saved for this Home screen.
 Choose its cards, headings, colours, order and row sources:
 local To Be Read, new books, history, collections, saved shelves or BookOrbit.
 Each book row has its own paging arrows and swipe navigation.

@@ -653,6 +653,58 @@ H.test("straight row honors one or five books and fits single-line title caption
     saved[layout_key], saved[config_key] = layout, config
 end)
 
+H.test("ongoing display picker, selection and opening stay local to the book card", function()
+    local config_key, layout_key = ctx.pfx .. "orbitui_dashboard_config", ctx.pfx .. "orbitui_dashboard_layout"
+    local original, layout = saved[config_key], saved[layout_key]
+    saved[config_key], saved[layout_key] = Model.config(original), "cover_row"
+    saved[config_key].cover_row_count = 5
+    local old_widget, old_dialog = package.loaded["ui/widget/widget"], package.loaded["ui/widget/buttondialog"]
+    package.loaded["ui/widget/widget"], package.loaded["ui/widget/buttondialog"] = Widget, Widget
+    local picker = require("adapters/orbitui_dashboard_settings").presentationItem(ctx.pfx, function() end)
+    for i, style in ipairs({ "focus", "fan" }) do
+        picker.callback()
+        shown_dialog.buttons[i + 1][1].callback()
+        H.eq(saved[config_key].ongoing_style, style)
+        H.eq(saved[layout_key], "cover_row")
+        local data = Dashboard.readData(ctx)
+        H.eq(#data.featured, 5)
+        local view = View.build(600, 730, ctx, data)
+        view.dimen.x, view.dimen.y = 0, 0
+        local area = view._plan.ladder
+        local function tap(target)
+            view:onDashboardTap(nil, { pos = { x = target.x + math.floor(target.w / 2),
+                y = target.y + math.floor(target.h / 2) } })
+        end
+        local prior_open = opened
+        if style == "focus" then
+            local thumb
+            for _, target in ipairs(view._actions) do
+                if target.row_card == "featured_books" and target.hold and target.h > target.w
+                        and target.w < area.w / 6 then thumb = target; break end
+            end
+            assert(thumb, "thumbnail"); tap(thumb)
+        else
+            local art = view._swipe_areas[1]
+            H.eq(view:onSwipe(nil, { direction = "west", pos = { x = art.x + art.w / 2, y = art.y + art.h / 2 } }), true)
+        end
+        H.eq(view._focus_file, "/first")
+        H.eq(opened, prior_open)
+        local read
+        for _, target in ipairs(view._actions) do
+            if target.row_card == "featured_books" and target.hold and target.w > target.h * 2 then
+                if target.w > area.w / 10 then read = target; break end
+            end
+        end
+        assert(read, "read button"); tap(read); H.eq(opened, "/first")
+        view:replaceContent(ctx, data); H.eq(view._focus_file, "/first")
+        view:free()
+    end
+    picker.callback(); shown_dialog.buttons[1][1].callback()
+    H.eq(saved[config_key].ongoing_style, nil); H.eq(saved[config_key].cover_row_count, 5)
+    saved[config_key], saved[layout_key] = original, layout
+    package.loaded["ui/widget/widget"], package.loaded["ui/widget/buttondialog"] = old_widget, old_dialog
+end)
+
 H.test("closing a dashboard layout change rebuilds the data context", function()
     local window = package.loaded["screens/sui_settings_window"]
     local old_window_show, old_engine = window.show, package.loaded["engines/sui_window"]
