@@ -35,6 +35,22 @@ package.loaded["features/library/sui_cover_widgets"] = {
 
 package.loaded["infra/sui_config"].onBookInfoChanged = function() end
 local Shared = dofile("modules/module_books_shared.lua")
+-- Rotating a cover paints this entire framed widget into the requested slot.
+local style = package.loaded["features/sui_style"]
+style.COLOR = { text_primary = "black" }
+local config = package.loaded["infra/sui_config"]
+for _, border in ipairs({ 1, 2, 3 }) do
+    style.BADGE_BORDER_SZ = border
+    config.getStretchedCoverBB = function(_, w, h)
+        assert(w == 100 - 2 * border and h == 150 - 2 * border)
+        return {}
+    end
+    local frame = Shared.getBookCover("book.epub", 100, 150)
+    assert(frame[1].width + 2 * frame.bordersize == frame.dimen.w)
+    assert(frame[1].height + 2 * frame.bordersize == frame.dimen.h)
+end
+style.BADGE_BORDER_SZ = 2
+
 local cover = {}
 assert(Shared.applyProgressBadge(cover, { percent = 0 }, 100, 150) == cover)
 assert(calls == 0, "unread covers must not gain a badge")
