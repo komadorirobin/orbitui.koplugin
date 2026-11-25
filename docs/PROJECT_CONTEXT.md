@@ -20,7 +20,7 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Local library and dock candidate, 2026-11-25
+## OrbitUI 1.5.0-beta.5, 2026-11-25
 
 New installations default to Cover fan for the Home dashboard book card.
 Upgrades with the dashboard turned off get a one-time invitation in FileManager

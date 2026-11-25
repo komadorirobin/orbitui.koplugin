@@ -1,5 +1,14 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.5.0-beta.5
+
+The Reading dashboard offers three ongoing-book displays. New installations
+start with Cover fan. Upgrades with the dashboard off can enable it from a
+one-time invitation with a screenshot. Hold a dock shortcut to set the
+startup view. Library and Manga reuse more of their sorting and metadata
+work between visits. Enable **Include preview releases** under **OrbitUI →
+System & maintenance → Updates** to receive this beta.
+
 ## OrbitUI 1.5.0-beta.4
 
 Published on 2026-11-25T06:20:17Z as GitHub prerelease 457721451
