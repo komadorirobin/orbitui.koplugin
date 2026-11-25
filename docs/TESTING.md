@@ -1,5 +1,25 @@
 # Verification and device acceptance
 
+## 2026-11-25 — Bookshelf and SimpleUI upstream merge
+
+The packaged plugin ran in Swedish KOReader on an emulated Tolino Vision Color.
+A scoped Bookshelf search for `ångström дюна` found `ÅNGSTRÖM ДЮНА.epub`.
+A real night-mode toggle changed the action to **Dagläge**, kept the settings
+name stable, used a separate day icon when configured, and switched back.
+Two fixture books with the same partial checksum remained distinct. Moving
+the second file and switching it back to Reading removed only its completion.
+The Home gesture run exercised the weekly and streak menus, selecting and
+moving BookOrbit achievements, and the book actions on a held Recent cover.
+
+Both interpreter suites passed. Each ran the 134 root Lua suites, 621 Bookshelf
+suites and 13 SimpleUI suites. The three SQLite suites omitted by the host
+runner passed in the guest (129 checks). Python reported 134 tests with four
+optional skips. All 44 translation catalogs passed. The final adjustment for
+legacy records with no source path was also checked in Lua and LuaJIT.
+The 2,000-path package passed native verification, upgrade from stable 1.4.0,
+restart and rollback. Evidence is under `test-results/upstream-20261125/`.
+Physical HiBreak display and gesture checks remain open.
+
 ## 2026-11-24 — Dashboard long-press menus and BookOrbit achievements
 
 A Swedish KOReader session on the emulated Tolino Vision Color verified that

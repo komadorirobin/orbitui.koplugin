@@ -27,7 +27,9 @@ in both modes unless a day icon is selected. The action's settings name stays
 stable. Completion lookup also follows an unambiguous moved collision entry
 and preserves neighbouring records during status changes and I/O errors.
 The bundled FingerTips pin, shelves, boxes, ornaments and external sync
-ownership carry forward. Verification is recorded in TESTING.md.
+ownership carry forward. Review covered C04 (completion identity), C07 (action
+presentation), C09 (imports) and C10 (search and Home). Verification is
+recorded in TESTING.md.
 
 ## 2026-11-22 — Bookshelf 6.6.0 and SimpleUI maintenance
 
