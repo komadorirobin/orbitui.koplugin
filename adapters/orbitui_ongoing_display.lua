@@ -62,6 +62,61 @@ local function tilted(r, radians)
     return area, wrap
 end
 
+-- Express the fan in units of one cover width. Each jacket rotates around
+-- the same point just below its lower edge. Fit the union of all four
+-- corners before converting to pixels, including the lower outside corners.
+local function drawFan(art, count, index, gap, draw)
+    local layers = {}
+    local xmin, xmax, ymin, ymax = math.huge, -math.huge, math.huge, -math.huge
+    local pivot_distance = .92 -- centre to pivot for a 1 × 1.5 jacket
+    for i = 1, count do
+        local offset = (i - index) % count
+        if offset > count / 2 then offset = offset - count end
+        local side_count = offset < 0 and floor((count - 1) / 2) or floor(count / 2)
+        local angle = offset == 0 and 0 or (count >= 4 and 41 or 34) * offset / side_count
+        local radians = math.rad(angle)
+        local c, s = math.cos(radians), math.sin(radians)
+        local x, y = pivot_distance * s, -pivot_distance * c
+        local dx, dy = .5 * c + .75 * math.abs(s), .5 * math.abs(s) + .75 * c
+        xmin, xmax, ymin, ymax = min(xmin, x - dx), max(xmax, x + dx), min(ymin, y - dy), max(ymax, y + dy)
+        layers[i] = { i = i, x = x, y = y, angle = angle }
+    end
+    table.sort(layers, function(a, b)
+        if math.abs(a.angle) == math.abs(b.angle) then return a.angle < b.angle end
+        return math.abs(a.angle) > math.abs(b.angle)
+    end)
+    local w = max(1, floor(min((art.w - 2*gap) / (xmax - xmin), (art.h - 2*gap) / (ymax - ymin))))
+    local h = floor(1.5 * w)
+    local cx = art.x + (art.w - (xmin + xmax) * w) / 2
+    local cy = art.y + (art.h - (ymin + ymax) * w) / 2
+    for _, layer in ipairs(layers) do
+        draw(layer.i, rect(cx + layer.x*w - w/2, cy + layer.y*w - h/2, w, h), layer.angle)
+    end
+end
+
+local function drawCompanions(v, area, books, index, title_captions, caption_size, cover, selectBook)
+    local n, gap = #books - 1, v.px(7)
+    local label_h = v.line(caption_size, true)
+    local slot = (area.w - (n - 1) * gap) / n
+    local w = floor(min(slot, (area.h - label_h - gap) / 1.5))
+    if w < v.px(14) then return false end
+    local h = floor(w * 1.5)
+    local top = area.y + floor((area.h - h - label_h - gap) / 2)
+    local j = 0
+    for i, entry in ipairs(books) do
+        if i ~= index then
+            local x = floor(area.x + j * (slot + gap))
+            cover(i, rect(x + (slot - w) / 2, top, w, h))
+            local caption = title_captions and entry.data.title or (percent(entry) .. " %")
+            v.text(caption, x, top + h + gap, floor(slot), caption_size, true, nil, 1, true, "center")
+            v.action(rect(x, top + h, slot, gap + label_h), function() selectBook(entry.file) end,
+                function(card) v.hold(entry.file, card) end)
+            j = j + 1
+        end
+    end
+    return true
+end
+
 function M.draw(v, r, data, selected, selectBook)
     local books = data.featured
     local px, text = v.px, v.text
@@ -106,105 +161,110 @@ function M.draw(v, r, data, selected, selectBook)
         end, function(card) v.hold(file, card) end)
     end
     local fan = data.config.ongoing_style == "fan"
-    local h = bottom - top
-    if h < px(75) then
-        text(book.data.title, left, top, width, 17, true, nil, 1, true)
-        v.bookAction(rect(left, top, width, max(1, h)), book.file)
-        return
+    local n, h = #books, bottom - top
+    local function swipe(area)
+        if n > 1 then v.swipe(area, function(delta) selectBook(books[(index - 1 + delta) % n + 1].file) end) end
     end
-    local copy_x, copy_y, copy_w = left, top, width
-    local title_size = fan and 21 or 23
-    local title_h = v.line(title_size, true)
-    local author_h, progress_h, button_h = v.line(14), v.line(14, true), max(px(31), v.line(15, true) + gap)
-    local copy_h = title_h + author_h + progress_h + button_h + px(4) + gap * 4
-    if h < title_h + progress_h + button_h + gap * 3 + px(4) then
+    local spacious = width >= px(440) and h >= px(165)
+    local title_size, author_size = spacious and 29 or 21, spacious and 18 or 14
+    local progress_size, button_size = spacious and 17 or 14, spacious and 17 or 15
+    local title_h, author_h = v.line(title_size, true), v.line(author_size)
+    local progress_h, button_h = v.line(progress_size, true), px(spacious and 39 or 31)
+    local minimum = title_h + progress_h + px(4) + button_h + 3 * gap
+    if h < minimum then
         text(book.data.title, left, top, width, 17, true)
-        text(string.format(_("%d%% read"), percent(book)), left, top + v.line(17, true), width, 14, false)
-        v.bookAction(rect(left, top, width, h), book.file)
-        if #books > 1 then v.swipe(rect(left, top, width, h), function(delta)
-            selectBook(books[(index - 1 + delta) % #books + 1].file)
-        end) end
+        if h >= v.line(17, true) + v.line(14) then
+            text(string.format(_("%d%% read"), percent(book)), left, top + v.line(17, true), width, 14, false)
+        end
+        local body = rect(left, top, width, h)
+        v.bookAction(body, book.file)
+        swipe(body)
         return
     end
-    -- Shallow cards (notably landscape) put text alongside the fan.
-    local stacked = fan and h >= copy_h + px(76) and h >= width * .55
-    local art
+
+    local gutter = px(spacious and 15 or 9)
+    local art, copy, companions
+    local stacked = fan and h >= minimum + author_h + px(95) and h >= width * .65
     if stacked then
-        art = rect(left, top, width, h - copy_h - gap)
-        copy_y = art.y + art.h + gap
+        local art_h = h - minimum - author_h - 2 * gap
+        art = rect(left, top, width, art_h)
+        copy = rect(left, top + art_h + gap, width, bottom - top - art_h - gap)
     else
-        local art_w = floor(width * (fan and .54 or .32))
+        local art_w = fan and floor(width * .54) or min(floor(width * .30), floor(h / 1.5))
         art = rect(left, top, art_w, h)
-        copy_x, copy_w = left + art_w + gap * 2, width - art_w - gap * 2
-    end
-    local n = #books
-    if fan then
-        local layers, leftmost, rightmost = {}, 0, 0
-        for i = 1, n do
-            local offset = (i - index) % n
-            if offset > n / 2 then offset = offset - n end
-            local spread = n <= 3 and .78 or .58
-            local shift = offset * spread
-            -- With four books the lone jacket on one side can show more art.
-            if n == 4 and offset < 0 then shift = -.90 end
-            layers[#layers + 1] = { index = i, offset = offset, shift = shift }
-            leftmost, rightmost = min(leftmost, shift), max(rightmost, shift)
-        end
-        table.sort(layers, function(a, b) return math.abs(a.offset) > math.abs(b.offset) end)
-        local cw = max(1, floor(min(art.h / 1.64, art.w / (1.25 + rightmost - leftmost))))
-        local cy = art.y + art.h / 2
-        local cx = art.x + art.w / 2 - (leftmost + rightmost) * cw / 2
-        for _, layer in ipairs(layers) do
-            local offset = layer.offset
-            local w = max(1, floor(cw * (1 - .06 * math.abs(offset))))
-            local x = cx + layer.shift * cw - w / 2
-            bookCover(layer.index, rect(x, cy - .75*w + cw * .025 * math.abs(offset), w, 1.5*w), offset * 7)
-        end
-        if n > 1 then v.swipe(art, function(delta) selectBook(books[(index - 1 + delta) % n + 1].file) end) end
-    else
-        local cw = max(1, floor(min(art.h / 1.5, art.w)))
-        bookCover(index, rect(art.x + (art.w - cw) / 2, top + (h - cw * 1.5) / 2, cw, cw * 1.5))
-    end
-    local thumb_h = not fan and n > 1 and max(0, min(px(63), h - copy_h - v.line(12, true) - gap * 2)) or 0
-    local thumbs = thumb_h >= px(14)
-    local group_h = copy_h + (thumbs and thumb_h + v.line(12, true) + gap * 2 or 0)
-    if not stacked then copy_y = top + max(0, floor((h - group_h) / 2)) end
-    local align = stacked and "center" or "left"
-    local function label(value, size, bold, color)
-        text(value, copy_x, copy_y, copy_w, size, bold, color, 1, true, align)
-        copy_y = copy_y + v.line(size, bold)
-    end
-    label(book.data.title, title_size, true)
-    local author = require("infra/sui_text").formatAuthors(book.data.authors)
-    if author and copy_y + author_h + progress_h + button_h + gap * 2 <= bottom then label(author, 14, false, v.muted) end
-    copy_y = copy_y + gap
-    local progress = string.format(_("%d%% read"), percent(book))
-    if data.current and data.current.file == book.file and data.time_left then progress = progress .. "  ·  " .. data.time_left end
-    label(progress, 14, true)
-    local track_w = min(copy_w, px(stacked and 148 or 230))
-    v.bar(copy_x + (stacked and floor((copy_w - track_w) / 2) or 0), copy_y, track_w, book.data.percent, false, "hero")
-    copy_y = copy_y + px(4) + gap
-    local bw = min(copy_w, px(120))
-    local button = rect(copy_x + (stacked and floor((copy_w - bw) / 2) or 0), copy_y, bw, button_h)
-    v.button(button)
-    v.bookAction(button, book.file)
-    if thumbs then
-        local tw = min(floor(thumb_h / 1.5), floor((copy_w - (n - 2) * gap) / (n - 1)))
-        local tx, ty = copy_x, button.y + button.h + gap * 2
-        for i, entry in ipairs(books) do
-            if i ~= index and tw >= 1 then
-                local area = rect(tx, ty, tw, tw * 1.5)
-                local caption = data.config.cover_row_caption == "title" and entry.data.title or (percent(entry) .. " %")
-                bookCover(i, area)
-                text(caption, tx, ty + area.h, tw, 12, true, nil, 1, true, "center")
-                v.action(rect(tx, ty + area.h, tw, v.line(12, true)), function() selectBook(entry.file) end,
-                    function(card) v.hold(entry.file, card) end)
-                tx = tx + tw + gap
+        local tx = left + art_w + gutter
+        copy = rect(tx, top, right - tx, h)
+        if not fan and n > 1 then
+            -- On wide cards give the companion covers their own area at the
+            -- right edge. They no longer compete with the title for height.
+            local rail_w = floor(min(width * .40, (n - 1) * h * .46 + (n - 2) * gap))
+            if spacious and copy.w - rail_w - gutter >= px(172) then
+                companions = rect(right - rail_w, top, rail_w, h)
+                copy.w = companions.x - gutter - copy.x
+            else
+                local rail_h = floor(min(h * .44, h - minimum - author_h - gutter))
+                if rail_h >= px(40) then
+                    companions = rect(tx, bottom - rail_h, right - tx, rail_h)
+                    copy.h = companions.y - gap - copy.y
+                end
             end
         end
-    elseif not fan and n > 1 then
-        -- A very short card still lets the reader select every book.
-        v.swipe(art, function(delta) selectBook(books[(index - 1 + delta) % n + 1].file) end)
+    end
+
+    if fan then
+        drawFan(art, n, index, gap, bookCover)
+        swipe(art)
+    else
+        local w = floor(min(art.w, art.h / 1.5))
+        bookCover(index, rect(art.x + (art.w - w) / 2, art.y + (art.h - w * 1.5) / 2, w, w * 1.5))
+    end
+
+    local align = stacked and "center" or "left"
+    local title = book.data.title or ""
+    local author = require("infra/sui_text").formatAuthors(book.data.authors)
+    local progress = string.format(_("%d%% read"), percent(book))
+    local eta = data.current and data.current.file == book.file and data.time_left
+    local used = minimum
+    if author and used + author_h <= copy.h then used = used + author_h else author = nil end
+    if eta then
+        local combined = progress .. "  ·  " .. eta
+        if v.textWidth(combined, progress_size, true) <= copy.w then
+            progress, eta = combined, nil
+        elseif used + v.line(author_size) <= copy.h then
+            used = used + v.line(author_size)
+        else
+            eta = nil
+        end
+    end
+    local lines = 1
+    if v.textWidth(title, title_size, true) > copy.w and used + title_h <= copy.h then
+        lines, used = 2, used + title_h
+    end
+    local y = copy.y + floor((copy.h - used) / 2)
+    text(title, copy.x, y, copy.w, title_size, true, nil, lines, true, align)
+    y = y + lines * title_h
+    if author then
+        text(author, copy.x, y, copy.w, author_size, false, v.muted, 1, true, align)
+        y = y + author_h
+    end
+    y = y + gap
+    text(progress, copy.x, y, copy.w, progress_size, true, nil, 1, true, align)
+    y = y + progress_h
+    if eta then
+        text(eta, copy.x, y, copy.w, author_size, false, v.muted, 1, true, align)
+        y = y + v.line(author_size)
+    end
+    local track_w = min(copy.w, px(stacked and 175 or 285))
+    v.bar(copy.x + (stacked and floor((copy.w - track_w) / 2) or 0), y, track_w, book.data.percent, false, "hero")
+    y = y + px(4) + 2 * gap
+    local bw = min(copy.w, px(spacious and 155 or 120))
+    local button = rect(copy.x + (stacked and floor((copy.w - bw) / 2) or 0), y, bw, button_h)
+    v.button(button, button_size)
+    v.bookAction(button, book.file)
+
+    if not fan and n > 1 then
+        if not companions or not drawCompanions(v, companions, books, index, data.config.cover_row_caption == "title",
+                spacious and 16 or 12, bookCover, selectBook) then swipe(art) end
     end
 end
 

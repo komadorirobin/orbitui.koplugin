@@ -483,6 +483,13 @@ function M.content(widget, p, ctx, data)
             Display.draw({
                 px = px, text = text, action = action, bar = bar, pad = p.pad, muted = muted, pet = pet,
                 line = function(size, bold) return textBlockHeight(textFace(size, bold), 1) end,
+                textWidth = function(value, size, bold)
+                    local face, weight = textFace(size, bold)
+                    local probe = UI.makeColoredText{ text = value, face = face, bold = weight, width = p.w }
+                    local width = probe:getSize().w
+                    probe:free()
+                    return width
+                end,
                 seeAll = function() require("adapters/orbitui_dashboard").showOngoing(ctx) end,
                 rule = function(x, y, w) add(UI.solidBar(w, px(1), BB.COLOR_LIGHT_GRAY), x, y) end,
                 sprite = function(value, size, x, y) add(Silverfish.spriteWidget(value, size, size, surface), x, y) end,
@@ -495,11 +502,11 @@ function M.content(widget, p, ctx, data)
                     swipe.turn, swipe.row_card = turn, card_scope
                     widget._swipe_areas[#widget._swipe_areas + 1] = swipe
                 end,
-                button = function(b)
+                button = function(b, size)
                     local frame = box(b, surface, ink)
                     frame.radius = px(5)
-                    text(_("Read on") .. "  →", b.x, b.y + math.floor((b.h - textBlockHeight(textFace(15, true), 1)) / 2),
-                        b.w, 15, true, ink, 1, true, "center")
+                    text(_("Read on") .. "  →", b.x, b.y + math.floor((b.h - textBlockHeight(textFace(size, true), 1)) / 2),
+                        b.w, size, true, ink, 1, true, "center")
                 end,
                 cover = function(file, raw, bounds, wrap)
                     local image = SH.getBookCover(file, raw.w, raw.h, false)

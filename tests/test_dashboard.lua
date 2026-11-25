@@ -735,6 +735,79 @@ H.test("both card styles fit empty and populated dashboards without changing oth
     package.loaded["ui/widget/widget"] = old
 end)
 
+H.test("wide focus cards use the right edge and fan jackets splay from a shared base", function()
+    local display = require("adapters/orbitui_ongoing_display")
+    local card = { x = 10, y = 20, w = 640, h = 280 }
+    local covers, layers, art, rules
+    local function ignore() end
+    local v = {
+        pad = 10, px = math.floor, line = function(size) return math.ceil(size * 1.3) end,
+        textWidth = function(value, size) return #value * size / 2 end,
+        text = function()
+            return { overlap_offset = {}, getSize = function() return { w = 50 } end }
+        end,
+        cover = function(file, _, bounds)
+            covers[file] = bounds
+            layers[#layers + 1] = file
+        end,
+        swipe = function(area) art = area end,
+        rule = function(_, y) rules[#rules + 1] = y end,
+        pet = { name = "Pet", stage = "Kitten" }, sprite = ignore, openPet = ignore,
+        bar = ignore, action = ignore, bookAction = ignore, button = ignore,
+    }
+    local data = { featured = {}, config = {} }
+    for i = 1, 5 do
+        local file = tostring(i)
+        data.featured[i] = { file = file, data = { title = file, percent = .1 } }
+        if i >= 3 then
+            for _, selected in ipairs({ "1", file }) do
+                covers, layers, rules = {}, {}, {}
+                data.config.ongoing_style = "focus"
+                display.draw(v, card, data, selected, ignore)
+                local main = covers[selected]
+                local rightmost = 0
+                for name, cover in pairs(covers) do
+                    if name ~= selected then
+                        assert(cover.x > card.x + card.w / 2)
+                        assert(cover.w > main.w * .35)
+                        rightmost = math.max(rightmost, cover.x + cover.w)
+                    end
+                end
+                assert(rightmost >= card.x + card.w - 2*v.pad)
+
+                covers, layers, rules = {}, {}, {}
+                data.config.ongoing_style = "fan"
+                display.draw(v, card, data, selected, ignore)
+                H.eq(#layers, i)
+                H.eq(layers[i], selected)
+                local front = covers[selected]
+                local left, right = math.huge, -math.huge
+                for _, b in pairs(covers) do
+                    assert(b.y > rules[1] and b.y + b.h < rules[2], "allow clearance at header and footer")
+                    left, right = math.min(left, b.x), math.max(right, b.x + b.w)
+                end
+                assert(math.abs((left + right) - (2*art.x + art.w)) <= 4)
+                local function span(y)
+                    local lo, hi = math.huge, -math.huge
+                    for x = left, right - 1 do
+                        for _, b in pairs(covers) do
+                            local dx, dy = x - b.x, y - b.y
+                            if dx >= 0 and dy >= 0 and dx < b.w and dy < b.h
+                                    and (not b.contains or b.contains(dx, dy)) then
+                                lo, hi = math.min(lo, x), math.max(hi, x)
+                            end
+                        end
+                    end
+                    return hi - lo
+                end
+                assert(span(front.y + math.floor(front.h * .55)) >
+                    span(front.y + math.floor(front.h * .94)) + front.w / 2,
+                    "jackets spread near the top and converge at the base")
+            end
+        end
+    end
+end)
+
 H.test("closing a dashboard layout change rebuilds the data context", function()
     local window = package.loaded["screens/sui_settings_window"]
     local old_window_show, old_engine = window.show, package.loaded["engines/sui_window"]
