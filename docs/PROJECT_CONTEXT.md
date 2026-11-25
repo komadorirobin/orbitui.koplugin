@@ -24,7 +24,10 @@ and correct this file in the same change.
 
 New installations default to Cover fan for the Home dashboard book card.
 Upgrades with the dashboard turned off get a one-time invitation in FileManager
-to enable it with Cover fan. Existing dashboard users keep their display.
+to enable it with Cover fan. The invitation shows a localized sample dashboard
+captured in KOReader with five demo art books. The cover art comes from the
+public-domain prints in the Ukiyo-e Gallery pack. Existing dashboard users keep
+their display.
 The card also offers its original layout and Book in focus. The `ongoing_style` setting belongs to the screen's dashboard
 configuration. A long press on the card or its covers offers the picker.
 Selection within the card is temporary. Cover loading, opening, and native

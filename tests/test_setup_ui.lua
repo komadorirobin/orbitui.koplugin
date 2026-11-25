@@ -264,6 +264,43 @@ H.test("declining is durable and makes no changes to Home", function()
     Setup = reset(true, Copy(data), true, Copy(settings))
     openHome(Setup); H.eq(#windows, 0); assert(Model.equal(before, settings))
 end)
+H.test("the invitation uses a local image in the UI language and leaves room for both choices", function()
+    local confirm = package.loaded["ui/widget/confirmbox"]
+    local original = confirm.new
+    local screen_h, text_h
+    package.loaded.device = { screen = { getHeight = function() return screen_h end,
+        scaleBySize = function(_, px) return px end } }
+    package.loaded["ui/size"] = { padding = { large = 10 } }
+    package.loaded["ui/widget/imagewidget"] = { new = function(_, o) return o end }
+    confirm.new = function(self, opts)
+        local dialog = original(self, opts)
+        dialog.movable = { getSize = function() return { h = text_h } end }
+        dialog.getAddedWidgetAvailableWidth = function() return 400 end
+        dialog.addWidget = function(self, w) self.preview = w end
+        return dialog
+    end
+    local function preview(language, asset, height, base, missing)
+        local Setup = upgraded({ version = 1 }, false)
+        screen_h, text_h = height, base
+        G_reader_settings.data.language = language
+        local path = "./assets/setup/dashboard-" .. asset .. ".png"
+        if not missing then files[path] = "file" end
+        openHome(Setup)
+        local dialog = windows[1]
+        assert(dialog.ok_callback and dialog.cancel_callback)
+        if dialog.preview then
+            H.eq(dialog.preview.file, path); H.eq(dialog.preview.scale_factor, 0)
+            H.eq(dialog.preview.width, 400)
+            assert(dialog.preview.height + text_h + 10 < screen_h)
+        end
+        return dialog.preview
+    end
+    assert(preview("sv_SE", "sv", 800, 260))
+    assert(preview("de", "en", 480, 300))
+    H.eq(preview("sv", "sv", 480, 425), nil)
+    H.eq(preview("en", "en", 800, 260, true), nil)
+    confirm.new = original
+end)
 H.test("enabled dashboards and future dashboard schemas keep their presentation and skip the offer", function()
     for _, cfg in ipairs({ { version = 1 }, { version = 1, ongoing_style = "focus" },
             { version = 1, ongoing_style = "fan" }, { version = 99 } }) do

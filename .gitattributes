@@ -5,6 +5,8 @@
 /tests/ export-ignore
 /scripts/ export-ignore
 /docs/screenshots/ export-ignore
+# Browser previews of separate ornament packs are for the repository only.
+/docs/*-preview.html export-ignore
 /addons/ export-ignore
 /assets/ornaments/ export-ignore
 /components/*/tests/ export-ignore

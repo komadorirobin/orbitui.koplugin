@@ -426,6 +426,25 @@ local function finishInvitation(enable)
     end
 end
 
+local function addDashboardPreview(dialog)
+    if not dialog.addWidget or not dialog.getAddedWidgetAvailableWidth then return end
+    local screen = require("device").screen
+    local width = dialog:getAddedWidgetAvailableWidth()
+    -- Measure the localized question and buttons first, including large UI fonts.
+    local room = math.floor(screen:getHeight() * .94) - dialog.movable:getSize().h - require("ui/size").padding.large
+    local height = math.min(math.floor(width * 554 / 640), room)
+    if height < screen:scaleBySize(60) then return end
+
+    local language = G_reader_settings:readSetting("language") or "en"
+    local locale = language:match("^sv") and "sv" or "en"
+    local root = debug.getinfo(1, "S").source:match("^@(.+)/adapters/[^/]+$") or "."
+    local file = root .. "/assets/setup/dashboard-" .. locale .. ".png"
+    if require("libs/libkoreader-lfs").attributes(file, "mode") ~= "file" then return end
+    dialog:addWidget(require("ui/widget/imagewidget"):new{
+        file = file, width = width, height = height, scale_factor = 0, file_do_cache = false,
+    })
+end
+
 local function offerDashboard(owner)
     local dialog
     local function choose(enable)
@@ -440,6 +459,7 @@ local function offerDashboard(owner)
         cancel_text = _("No thanks"), cancel_callback = function() choose(false) end,
         sui_native = true, _sui_keep_homescreen = true,
     }
+    addDashboardPreview(dialog)
     invitation = dialog
     ui():show(dialog)
 end
