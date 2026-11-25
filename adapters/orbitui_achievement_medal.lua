@@ -149,11 +149,18 @@ end
 
 -- Compose from packaged shapes only. An API value can select a glyph but
 -- cannot supply SVG markup, a path on the device or an external resource.
-function M.svg(item)
+function M.svg(item, background)
     local rarity = not item.secret and metal[item.rarity] and item.rarity or "common"
     local c = metal[rarity]
     local glyph = glyphs[item.icon] or glyphs["help-circle"]
     local parts = { '<svg xmlns="http://www.w3.org/2000/svg" width="108" height="108" viewBox="-4 -4 108 108">' }
+    if background then
+        -- Some in-memory SVG renderers flatten transparent pixels to white.
+        -- ImageWidget preserves original image colours at night, so use the
+        -- visible card colour here, before KOReader's display inversion.
+        local fill = require("infra/sui_accent").toHex(background)
+        parts[#parts + 1] = string.format('<rect x="-4" y="-4" width="108" height="108" fill="%s"/>', fill)
+    end
     if item.earned and not item.secret then
         parts[#parts + 1] = string.format([[<defs>
 <linearGradient id="rim" x1="0" y1="0" x2=".92" y2="1">
@@ -194,9 +201,9 @@ function M.svg(item)
     return table.concat(parts)
 end
 
-function M.widget(item, size)
+function M.widget(item, size, background)
     if size < 1 then return end
-    local svg = M.svg(item)
+    local svg = M.svg(item, background)
     local renderer = require("ui/renderimage")
     local ok, image = pcall(renderer.renderImageData, renderer, svg, #svg, false, size, size)
     if not ok or not image then return end

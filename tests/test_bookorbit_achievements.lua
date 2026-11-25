@@ -9,6 +9,9 @@ local next_token = "bok_" .. string.rep("b", 49)
 local screen = { scaleBySize = function(_, x) return x end, getWidth = function() return 600 end,
     getHeight = function() return 800 end }
 local native = H.widget()
+package.loaded["infra/sui_accent"] = { toHex = function(c)
+    return string.format("#%02X%02X%02X", c.r, c.g, c.b)
+end }
 function native:getSize() return self.dimen or { w = self.w or self.width or 20, h = self.h or self.height or 20 } end
 function native:paintTo() end
 function native:free() end
@@ -299,6 +302,7 @@ H.test("the Home card shows the server's next milestone beside the latest award 
     H.eq(rows[1].bgcolor, fill)
     H.eq(rows[2][3].bgcolor, fill)
     H.eq(rows[3][3][2].bgcolor, fill)
+    assert(rows[2][1].image.svg:find('height="108" fill="#E4EAF0"', 1, true))
     H.eq(#rows, 3); H.eq(rows[2][3].text, "First chapter")
     H.eq(Achievements.snapshot().items[1].icon, "book-open")
     assert(rows[2][1].image.svg:find('id="face"',1,true) and rows[3][1].image.svg:find('id="blank"',1,true))

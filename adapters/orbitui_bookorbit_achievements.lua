@@ -311,10 +311,10 @@ end
 
 -- Rendering is limited to the displayed badges. Both views reserve the
 -- same column for the medal; narrow cards keep the text area usable.
-local function medalRow(item, width, height, max_size, content)
+local function medalRow(item, width, height, max_size, background, content)
     local screen = require("device").screen
     local size = math.min(height, screen:scaleBySize(max_size), math.floor(width * .28))
-    local image = require("adapters/orbitui_achievement_medal").widget(item, size)
+    local image = require("adapters/orbitui_achievement_medal").widget(item, size, background)
     if not image then return content(width) end
     local gap = math.min(screen:scaleBySize(7), math.floor(width / 12))
     return require("ui/widget/horizontalgroup"):new{ align = "center", image,
@@ -407,7 +407,7 @@ function M.open(ctx)
             return textWidget(value, w, h, 16, false)
         end,
         cell_renderer = function(item, dimen)
-            return medalRow(item, dimen.w, dimen.h, 56, function(width)
+            return medalRow(item, dimen.w, dimen.h, 56, nil, function(width)
                 return Modal.sheetRow({ title = title(item), subtitle = progress(item) }, { w = width, h = dimen.h })
             end)
         end,
@@ -465,7 +465,7 @@ local function listRow(item, w, h, background)
     elseif not item.earned then
         heading = remaining(item) .. " · " .. heading
     end
-    return medalRow(item, w, h, 48, function(width)
+    return medalRow(item, w, h, 48, background, function(width)
         if not detail then
             local size = h < screen:scaleBySize(25) and 13 or 15
             return textWidget(heading, width, math.min(h, screen:scaleBySize(30)), size, true, background)
@@ -477,7 +477,7 @@ local function listRow(item, w, h, background)
     end)
 end
 
-local function medalTile(item, w, h)
+local function medalTile(item, w, h, background)
     local screen = require("device").screen
     local Text = require("ui/widget/textwidget")
     local Font = require("ui/font")
@@ -494,7 +494,8 @@ local function medalTile(item, w, h)
         if value then detail = caption(value, 12, false) end
     end
     local space = h - name:getSize().h - (detail and detail:getSize().h or 0)
-    local image = require("adapters/orbitui_achievement_medal").widget(item, math.min(space, w, screen:scaleBySize(54)))
+    local image = require("adapters/orbitui_achievement_medal").widget(item,
+        math.min(space, w, screen:scaleBySize(54)), background)
     local tile = require("ui/widget/verticalgroup"):new{}
     if image then tile[#tile + 1] = image end
     tile[#tile + 1] = name
@@ -532,7 +533,7 @@ local function cardContent(data, failure, preview, w, h, background)
         for first = 1, #items, columns do
             local row = require("ui/widget/horizontalgroup"):new{}
             for i = first, math.min(first + columns - 1, #items) do
-                row[#row + 1] = medalTile(items[i], math.floor(w / columns), row_h)
+                row[#row + 1] = medalTile(items[i], math.floor(w / columns), row_h, background)
             end
             group[#group + 1] = row
         end
