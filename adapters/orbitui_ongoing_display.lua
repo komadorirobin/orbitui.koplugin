@@ -84,7 +84,7 @@ function M.draw(v, r, data, selected, selectBook)
         local y = bottom - foot_h
         v.rule(left, y - gap, width)
         v.sprite(pet, foot_h, left, y)
-        text(pet.name .. "   " .. pet.stage, left + foot_h + gap, y + max(0, (foot_h - v.line(13, true)) / 2),
+        text(pet.name .. "   " .. pet.stage, left + foot_h + gap, y + max(0, floor((foot_h - v.line(13, true)) / 2)),
             width - foot_h - gap, 13, true)
         v.action(rect(left, y - gap, width, foot_h + gap), function() v.openPet(pet) end)
         bottom = y - gap * 2
@@ -127,33 +127,37 @@ function M.draw(v, r, data, selected, selectBook)
         return
     end
     -- Shallow cards (notably landscape) put text alongside the fan.
-    local stacked = fan and h >= copy_h + px(76)
+    local stacked = fan and h >= copy_h + px(76) and h >= width * .55
     local art
     if stacked then
         art = rect(left, top, width, h - copy_h - gap)
         copy_y = art.y + art.h + gap
     else
-        local art_w = floor(width * (fan and .47 or .32))
+        local art_w = floor(width * (fan and .54 or .32))
         art = rect(left, top, art_w, h)
         copy_x, copy_w = left + art_w + gap * 2, width - art_w - gap * 2
     end
     local n = #books
     if fan then
-        local step = .53
-        local layers, far = {}, 0
+        local layers, leftmost, rightmost = {}, 0, 0
         for i = 1, n do
             local offset = (i - index) % n
             if offset > n / 2 then offset = offset - n end
-            layers[#layers + 1] = { index = i, offset = offset }
-            far = max(far, math.abs(offset))
+            local spread = n <= 3 and .78 or .58
+            local shift = offset * spread
+            -- With four books the lone jacket on one side can show more art.
+            if n == 4 and offset < 0 then shift = -.90 end
+            layers[#layers + 1] = { index = i, offset = offset, shift = shift }
+            leftmost, rightmost = min(leftmost, shift), max(rightmost, shift)
         end
         table.sort(layers, function(a, b) return math.abs(a.offset) > math.abs(b.offset) end)
-        local cw = max(1, floor(min(art.h / 1.64, art.w / (1.3 + 2 * step * far))))
+        local cw = max(1, floor(min(art.h / 1.64, art.w / (1.25 + rightmost - leftmost))))
         local cy = art.y + art.h / 2
+        local cx = art.x + art.w / 2 - (leftmost + rightmost) * cw / 2
         for _, layer in ipairs(layers) do
             local offset = layer.offset
             local w = max(1, floor(cw * (1 - .06 * math.abs(offset))))
-            local x = art.x + art.w / 2 + offset * step * cw - w / 2
+            local x = cx + layer.shift * cw - w / 2
             bookCover(layer.index, rect(x, cy - .75*w + cw * .025 * math.abs(offset), w, 1.5*w), offset * 7)
         end
         if n > 1 then v.swipe(art, function(delta) selectBook(books[(index - 1 + delta) % n + 1].file) end) end

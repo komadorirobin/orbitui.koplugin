@@ -374,7 +374,7 @@ function M.presentationItem(pfx, applied)
                     end)
                 end }}
         end
-        dialog = require("ui/widget/buttondialog"):new{ title = title, buttons = buttons,
+        dialog = require("ui/widget/buttondialog"):new{ title = title, buttons = buttons, modal = true,
             _sui_keep_homescreen = true }
         ui:show(dialog)
     end }
