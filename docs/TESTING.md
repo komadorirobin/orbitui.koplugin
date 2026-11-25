@@ -1,5 +1,26 @@
 # Verification and device acceptance
 
+## 2026-11-25 — Duplicate Home dashboard below the dock
+
+On the USB HiBreak, the first ordinary swap from This week to BookOrbit
+achievements produced a clean screen on the previous build (`ec9b43183`).
+For a repeatable comparison, a temporary device probe asked Home to refresh
+once from inside the dashboard's build callback. The previous build appended
+two dashboards to the same page. Their combined height was 2,658 px, and
+the second greeting and cover row appeared behind the page dots and dock.
+This reproduces the reported appearance. The original callback sequence
+at the time of the user's photo was not recorded.
+
+The tested runtime is `98552d26e`, archive SHA-256
+`8e13e37f753704583d073301aeeacb1fb27f130c23681d675ce4a3cc43a2b6a6`.
+The same probe produced one 1,329 px dashboard. A refresh triggered during
+the actual long-press swap and two further unmodified swap cycles also left
+one dashboard on Home. The bottom 255 px matched the clean reference
+pixel for pixel after these swaps, after paging away and back, and after an
+ordinary restart with the probe removed and the original dashboard settings
+restored. Targeted Lua and LuaJIT tests exercise nested and repeated updates,
+cache invalidation priority, and recovery from a build error.
+
 ## 2026-11-25 — Repeated Library to Manga switches on the USB HiBreak
 
 The previous local build (`372ece9d7`) sometimes discarded the derived
