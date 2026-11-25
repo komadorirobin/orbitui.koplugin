@@ -1,5 +1,24 @@
 # Verification and device acceptance
 
+## 2026-11-25 — Ongoing book displays on the HiBreak
+
+The USB HiBreak ran local source `5b0390764` from verified runtime archive
+`efb5eb149af055d9cf5154ce849da1f2edca4a0dbbba8b56f51dfefccdbdad3e`.
+The four-book Home card was tested in Swedish. Holding the card header kept
+the existing settings and exposed the display picker as its first item.
+Holding a cover opened the native book page with the same picker in its
+header. The picker appeared above that page with native-dialog styling
+enabled and selecting the fan returned directly to Home. Tapping an exposed
+jacket and swiping the fan selected another book. The focus layout's Read on
+button reopened Underjordisk at its existing 44% position. The original
+straight row was reselected at the end. Device screenshots are in the local
+`test-results/home-reading-layouts-20261125/` folder.
+
+The complete test command passed. Four optional artwork source checks were
+skipped without their original-photo caches. Dashboard tests cover empty,
+single, three- and five-book cases, portrait and landscape geometry, picker
+persistence and opening the selected secondary book.
+
 ## 2026-11-25 — BookOrbit achievement card colours on the HiBreak
 
 The USB HiBreak ran local runtime `9e2fd8881` from archive SHA-256
