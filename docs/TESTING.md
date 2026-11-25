@@ -1,5 +1,21 @@
 # Verification and device acceptance
 
+## 2026-11-25 — Cover fan default and dashboard invitation
+
+A Swedish Tolino Vision Color emulator ran source `d5fee893f` from ZIP
+`dca552f94d6324b72fd7eca6c0891a9a109ba1ef6abe238eee8299f75b7b1ac2`.
+A clean profile opened the guide with Cover fan preselected. An upgraded
+profile with its dashboard disabled displayed the invitation over Home.
+Accepting enabled the fan and preserved the old Home page and the five-book
+setting. Dismissing kept the dashboard off. Both decisions survived a full
+restart. An already-enabled dashboard kept Book in focus without a prompt.
+
+The full test command passed with its optional environment-dependent skips.
+The 31 setup checks also passed under LuaJIT, including reader-first startup,
+skipping the guide, returning to the straight row and stale dialog callbacks.
+Local logs and the Swedish invitation screenshot are in
+`test-results/fan-onboarding-20261125/`. The physical HiBreak was disconnected.
+
 ## 2026-11-25 — Silverfish footer on the HiBreak
 
 The Swedish USB HiBreak ran source `7bdd05ff7` from archive
