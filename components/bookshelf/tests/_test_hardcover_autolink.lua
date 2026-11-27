@@ -308,4 +308,43 @@ t.test("the settings menu runs this pass, and the old message-box runner is gone
     assert(not src:find("(tap to cancel)", 1, true), "a tap anywhere must not cancel")
 end)
 
+t.test("the two edition-link menu entries submit different sets of books", function()
+    local dialog, submitted
+    local ui = require("ui/uimanager")
+    ui.show = function(_, widget) dialog = widget end
+    ui.close = function() end
+    package.loaded["ui/widget/buttondialog"] = { new = function(_, opts) return opts end }
+    for _, name in ipairs({ "ui/widget/menu", "ui/widget/notification", "ui/widget/spinwidget",
+        "lib/bookshelf_focus", "lib/bookshelf_settings_store", "lib/bookshelf_cover_marks",
+        "lib/bookshelf_fonts", "lib/bookshelf_space" }) do package.loaded[name] = {} end
+    package.loaded["lib/bookshelf_gesture_zones"] = { passSwipesOn = function() end }
+    package.loaded["lib/bookshelf_hardcover_key_ui"] = { menuItem = function() return {} end }
+    local hc = require("lib/bookshelf_hardcover")
+    hc.isAvailable = function() return true end
+    hc.whenOnline = function(fn) fn() end
+    hc.unlinkedFiles = function() return { "new" } end
+    local repo = require("lib/bookshelf_book_repository")
+    repo.getAllFilepaths = function() return { "correct", "wrong", "new" } end
+    repo.librarySourceFilepaths = function() return { "new", "source-book" } end
+    package.loaded["lib/bookshelf_hardcover_autolink"] = {
+        RATE = AutoLink.RATE, run = function(opts) submitted = opts end,
+    }
+    local settings = dofile("lib/bookshelf_settings.lua")
+    local rows = {}
+    for _, row in ipairs(settings:_hardcoverSubItems()) do
+        if row.text then rows[row.text] = row end
+    end
+    local function selectEditions(label)
+        submitted = nil
+        rows[label].callback()
+        for _, buttons in ipairs(dialog.buttons) do
+            if buttons[1].text == "Auto-link editions" then buttons[1].callback(); break end
+        end
+        assert(submitted and submitted.edition_only)
+        return table.concat(submitted.items, ",")
+    end
+    eq(selectEditions("Auto-link all books"), "new")
+    eq(selectEditions("Re-scan all books with edition IDs"), "correct,wrong,new,source-book")
+end)
+
 t.done()

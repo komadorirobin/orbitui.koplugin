@@ -3924,7 +3924,7 @@ function Settings:_hardcoverSubItems()
                 return (ok_hc and HC and HC.isAvailable and HC.isAvailable()) or false
             end,
             callback = function(touchmenu_instance)
-                autoLinkAll(touchmenu_instance, false)
+                autoLinkAll(touchmenu_instance, true)
             end,
         },
         {

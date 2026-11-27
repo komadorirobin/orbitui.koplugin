@@ -1329,6 +1329,7 @@ local sv = {
     ["Preload Bookshelf while reading (experimental)"] = "Förladda Bookshelf under läsning (experimentellt)",
     ["Progress bar track"] = "Läsförloppets bakgrundsspår",
     ["Re-scan all books with edition IDs"] = "Indexera om alla böcker med utgåve-ID",
+    ["Scan %1 book(s) for embedded Hardcover edition IDs?\n\nBooks without an edition ID are skipped. Unlinked books are linked, and existing links are corrected when they point to another edition. Hardcover is contacted only for books that need updating. Cancellable, with a report at the end."] = "Kontrollera utgåve-ID för alla %1 böcker i biblioteket?\n\nBöcker utan utgåve-ID hoppas över. Om en länk saknas eller pekar på fel utgåva hämtas rätt koppling från Hardcover. Du kan avbryta under tiden. När kontrollen är klar visas en rapport.",
     ["Refresh linked book details"] = "Uppdatera länkade böckers information",
     ["Refresh ratings only"] = "Uppdatera bara betyg",
     ["Reinstall selected channel"] = "Installera om vald kanal",
