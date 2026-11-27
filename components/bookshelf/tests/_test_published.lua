@@ -252,10 +252,9 @@ t.test("a date the reader types must parse", function()
     eq(Published.userDate("/b/a.epub"), "1869-03")
 end)
 
-t.test("Hardcover: the book's first year is fetched and applied with the metadata switch", function()
+t.test("Hardcover: the book's first year is applied with the metadata switch", function()
     local hc = io.open("lib/bookshelf_hardcover.lua"):read("*a")
-    local _n, books_with_year = hc:gsub("book_series { position series { name } }%s+pages%s+release_year", "")
-    assert(books_with_year == 2, "both enrichment queries must ask for release_year, got " .. books_with_year)
+    -- The three outgoing queries are exercised in _test_hardcover.lua.
     assert(hc:find("published_year = tonumber(data.book.release_year)", 1, true), "not in the payload")
     local apply = hc:match("\nfunction Hardcover.applyMetadata%(book%)\n(.-)\nend\n")
     assert(apply and apply:find("book.hardcover_published", 1, true), "applyMetadata does not set it")

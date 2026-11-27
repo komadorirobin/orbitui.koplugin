@@ -422,6 +422,7 @@ test("batch editions reuse the single-book enrichment cache and check both IDs",
     local query = api.query
     local batch_calls, single_calls = 0, 0
     api.query = function(self, q, v)
+        assert(q:find("release_year", 1, true), "enrichment must request the work’s first publication year")
         if not v.ids then
             single_calls = single_calls + 1
             return query(self, q, v)
@@ -446,7 +447,8 @@ test("batch editions reuse the single-book enrichment cache and check both IDs",
         assert(Hardcover.refreshBook(book, {prefetched_edition = rows[457]}))
         rows[456].book.id = 888
         assert(Hardcover.refreshBook(book, {prefetched_edition = rows[456]}))
-        assert(single_calls == 2 and batch_calls == 1)
+        assert(Hardcover.refreshBook{ filepath = "/books/b.epub" }) -- work-only link
+        assert(single_calls == 3 and batch_calls == 1)
     end)
     api.query = query
     assert(ok, err)
