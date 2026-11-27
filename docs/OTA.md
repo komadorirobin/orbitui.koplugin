@@ -2,6 +2,20 @@
 
 ## OrbitUI 1.5.0-beta.7
 
+Published on 2026-11-27T17:33:45Z as GitHub prerelease 460892419
+from **ef43cd14e**. The 10,548,236-byte ZIP and its checksum
+matched the draft and local build. SHA-256 is
+`a8c4911a2d7b8b68c0cf8cbb5d066c3a730c01fa4d2278c215be98df6cbf93f0`. GitHub Latest and the stable updater both offer 1.4.0.
+
+Both interpreter jobs passed on [main](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/46042075091)
+and the [release tag](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/46042080675).
+All four CI archives matched the 1,998 installed files and executable bits.
+KOReader’s preview updater on 1.4.0 and 1.5.0-beta.6 discovered the release
+over anonymous HTTPS, installed the public bytes, restarted and rolled back.
+On the Tolino Vision Color emulator the release ZIP linked 25 EPUBs in
+10.90 seconds with one simulated Hardcover request. Checking the same links
+again took 3.35 seconds and made zero requests.
+
 Bulk linking now looks up as many as 25 explicit Hardcover edition IDs in
 one request and reuses the returned book details. The full-library rescan
 skips network lookups for matching links. See [the timing measurements](TESTING.md)
