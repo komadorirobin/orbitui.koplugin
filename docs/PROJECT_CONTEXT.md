@@ -20,7 +20,11 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Development after 1.5.0-beta.5
+## OrbitUI 1.5.0-beta.6, 2026-11-27
+
+The Hardcover edition rescan now checks existing links across the library.
+The ordinary auto-link action still selects unlinked books. Its confirmation
+explains that a large first pass can take hours.
 
 The November 27 merge brings Bookshelf 6.6.1 and SimpleUI 3.1.1 to main.
 Page-count rendering has a per-book deadline and the native menu search can

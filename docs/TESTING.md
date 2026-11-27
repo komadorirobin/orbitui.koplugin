@@ -1,5 +1,16 @@
 # Verification and device acceptance
 
+## 2026-11-27 — Hardcover edition rescan
+
+On the Tolino Vision Color emulator, the Swedish settings dialog in the
+local build of `ff4cbebd0` offered all four test EPUBs. With simulated
+Hardcover responses, it corrected one link, created another, retained
+the correct link and skipped the book without an edition ID. Only two
+editions needed lookups. A separate 1,000-book scheduler test recorded
+2,500 seconds of plugin pacing for new links and zero for correct links.
+These checks used test data. Physical-reader and live server times were
+outside this run.
+
 ## 2026-11-27 — Bookshelf 6.6.1 and SimpleUI 3.1.1
 
 The Swedish Tolino Vision Color emulator ran KOReader v2026.07.1 with the

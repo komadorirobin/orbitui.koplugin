@@ -3800,11 +3800,6 @@ function Settings:_hardcoverSubItems()
             return
         end
 
-        -- ~2 Hardcover calls per processed book (resolve/search, then fetch
-        -- details), so pace at ~2.5s/book to stay under the ~60/min API limit.
-        local RATE = require("lib/bookshelf_hardcover_autolink").RATE
-        local est_min = math.max(1, math.ceil(total * RATE / 60))
-
         local function showReport(st, best_guess)
             local ok_tok, Tokens = pcall(require, "lib/bookshelf_tokens")
             if not ok_tok or not Tokens or not Tokens.autoLinkReportHtml then return end
@@ -3867,7 +3862,7 @@ function Settings:_hardcoverSubItems()
         dialog = ButtonDialog:new{
             title = repair_editions
                 and T(_("Scan %1 book(s) for embedded Hardcover edition IDs?\n\nBooks without an edition ID are skipped. Unlinked books are linked, and existing links are corrected when they point to another edition. Hardcover is contacted only for books that need updating. Cancellable, with a report at the end."), tostring(total))
-                or T(_("Auto-link %1 unlinked book(s)?\n\nContacts Hardcover (rate-limited), up to ~%2 min. Progress shows in the status line, with Stop, and a report follows."), tostring(total), tostring(est_min)),
+                or T(_("Link books to Hardcover? (%1 unlinked)\n\nOrbitUI looks up matches and downloads book details. Large libraries can take hours. You can stop the scan from the status line and see a report."), tostring(total)),
             title_align = "center",
             buttons = buttons,
         }

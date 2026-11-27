@@ -1,5 +1,12 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.5.0-beta.6
+
+The Hardcover edition rescan checks the whole library. It compares edition
+IDs locally, looks up missing or mismatched links and reports the result.
+First-time bulk linking can take hours on a large library. This beta also
+includes Bookshelf 6.6.1 and SimpleUI 3.1.1.
+
 ## OrbitUI 1.5.0-beta.5
 
 Published on 2026-11-25T17:32:23Z as GitHub prerelease 458423631

@@ -1167,6 +1167,7 @@ local sv = {
     ["Author name formatting"] = "Visning av författarnamn",
     ["Auto"] = "Automatiskt",
     ["Auto (follow night mode)"] = "Automatiskt (följ nattläge)",
+    ["Link books to Hardcover? (%1 unlinked)\n\nOrbitUI looks up matches and downloads book details. Large libraries can take hours. You can stop the scan from the status line and see a report."] = "Länka böcker till Hardcover? (%1 olänkade)\n\nOrbitUI söker efter matchningar och hämtar bokuppgifter. För stora bibliotek kan det ta timmar. Du kan avbryta i statusraden och se en rapport.",
     ["Auto-link editions"] = "Länka utgåvor automatiskt",
     ["Auto-link report"] = "Rapport om automatisk länkning",
     ["Auto-link unlinked books"] = "Länka olänkade böcker automatiskt",
