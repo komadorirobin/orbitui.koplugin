@@ -1,5 +1,26 @@
 # Verification and device acceptance
 
+## 2026-11-27 — Bulk Hardcover edition linking
+
+The Tolino Vision Color emulator ran KOReader with a fresh profile, synthetic
+EPUBs with distinct embedded edition IDs and immediate simulated Hardcover
+responses. Each run used the Swedish full-library rescan menu, real EPUB
+parsing, link storage, SQLite enrichment cache and ordinary plugin pacing.
+The fixture checked each local link, description, page count, rating and
+publication year before rescanning the same files.
+
+| Build and library | First pass | Edition and metadata requests | Repeat scan | Repeat requests |
+| --- | ---: | ---: | ---: | ---: |
+| Published beta.6, 25 EPUBs | 66.05 s | 50 | 1.11 s | 0 |
+| Local build `786d1aee4`, 25 EPUBs | 6.74 s | 1 | 1.15 s | 0 |
+| Initial batch implementation `733ddb484`, 1,000 EPUBs | 1,076.98 s | 40 | 37.29 s | 0 |
+
+The later build also resumes batching after a temporary lookup failure.
+Host tests cover partial results, duplicate editions, ISBN fallback, Stop
+and request limits. The physical reader and live Hardcover service were
+outside the measurements. Local fixtures and logs are under
+`test-results/hardcover-batch-20261127/`.
+
 ## 2026-11-27 — Hardcover edition rescan
 
 On the Tolino Vision Color emulator, the Swedish settings dialog in the
