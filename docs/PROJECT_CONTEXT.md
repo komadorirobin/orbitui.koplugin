@@ -20,6 +20,14 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
+## Development after 1.5.0-beta.5
+
+The November 27 merge brings Bookshelf 6.6.1 and SimpleUI 3.1.1 to main.
+Page-count rendering has a per-book deadline and the native menu search can
+handle truncated multibyte previews. The finished-books list shows authors
+before dates and offers a book-actions button. The import and verification
+are recorded in [the merge log](MERGE_LOG.md) and [Testing](TESTING.md).
+
 ## OrbitUI 1.5.0-beta.5, 2026-11-25
 
 New installations default to Cover fan for the Home dashboard book card.

@@ -4,6 +4,30 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-27 — Bookshelf 6.6.1 and SimpleUI 3.1.1
+
+Starting at the beta.5 receipt `6cb867622`, the unsquashed imports
+`6a92909ba` and `7dcb027b2` advance Bookshelf to
+[`b7be1dd02`](https://github.com/AndyHazz/bookshelf.koplugin/commit/b7be1dd02cf7a6dc2a18fbad999cc9b608d21d33)
+and SimpleUI to
+[`402686fec`](https://github.com/doctorhetfield-cmd/simpleui.koplugin/commit/402686fec8ad7d190c1156d45ffce7e68b38da5c).
+Both merged cleanly. The original fork anchors remain in history.
+
+Bookshelf's page-count scan skips two forced garbage collections when opening
+a document in its render subprocess. A five-minute deadline lets the scan move
+past a stalled book and skip it on later scans while its file size matches
+(C04). List, hero and token previews truncate at a UTF-8 boundary, including
+when KOReader searches menu entries (C07/C10). The upstream contributor traced
+the crash on their Kobo and reused Bookshelf's existing cover-label helper.
+No incoming change has evidence of an OrbitUI port.
+[Kobo report and fix](https://github.com/AndyHazz/bookshelf.koplugin/pull/629)
+
+SimpleUI's finished-book rows show the author before the dates and have a
+book-actions icon. Tabs use a larger default label size and more vertical
+padding. The French, Polish and Simplified Chinese catalogues were updated.
+The hosted component version check follows Bookshelf 6.6.1 (C09). See
+[Testing](TESTING.md) for the package and emulator checks.
+
 ## 2026-11-25 — Bookshelf search and SimpleUI reading history
 
 The user requested a reviewed upstream merge. Unsquashed import

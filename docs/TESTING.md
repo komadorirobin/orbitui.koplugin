@@ -1,5 +1,25 @@
 # Verification and device acceptance
 
+## 2026-11-27 — Bookshelf 6.6.1 and SimpleUI 3.1.1
+
+The Swedish Tolino Vision Color emulator ran KOReader v2026.07.1 with the
+sealed build of `56258fbbe` (SHA-256
+`b94617de8c96e903783b8a3cfaffc236b012c3c360f831f90092694301bdb93e`).
+KOReader's native menu search found a Bookshelf list preview whose byte
+limit fell inside an `ä`. The finished-books screen displayed the author's
+name before the date. Its book-actions button opened the action sheet.
+
+A two-book scan used a test-only three-second render deadline and a delay
+when opening the first EPUB. The actual render subprocess expired after
+3.3 seconds. The scan counted the next EPUB and skipped the first file on
+a repeat scan. The shipped deadline is 300 seconds. The physical HiBreak
+was disconnected. These checks establish scan behavior, not a Bigme speedup.
+
+The three native SQLite suites passed on the emulator (129 checks). The host
+also ran the tag index, tag-series and forecast suites against SQLite under
+LuaJIT. All 44 translation catalogues compiled. Local evidence is under
+`test-results/upstream-20261127/`.
+
 ## 2026-11-25 — Dashboard preview in the upgrade invitation
 
 The Tolino Vision Color emulator ran source `bcc6cd67c` from ZIP
