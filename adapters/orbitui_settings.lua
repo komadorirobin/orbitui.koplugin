@@ -211,7 +211,7 @@ local native_terms = {
         "Hardcover genres used",
         "Hardcover integration could not be loaded",
         "Hardcover ratings refresh failed",
-        "Hardcover's request limit for today was reached. Run it again tomorrow to carry on.",
+        "Hardcover's request limit was reached. Try again later to continue linking.",
         "How many of a book's Hardcover genres to use for tag pills and the genre shelves/stacks.",
         "Manage Hardcover data",
         "No books to scan.",
