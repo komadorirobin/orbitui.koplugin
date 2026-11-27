@@ -79,6 +79,33 @@ test("a file that changed size gets another try", function()
     assert(not G.skipped(s, "/b/fixed.epub"), "a changed file stayed skipped")
 end)
 
+test("a book the deadline ended is skipped like one that crashed", function()
+    local s = store()
+    sizes["/b/endless.epub"] = 700
+    G.skip(s, "/b/endless.epub")
+    assert(G.skipped(s, "/b/endless.epub"))
+    assert(not G.skipped(s, "/b/other.epub"))
+    sizes["/b/endless.epub"] = 701
+    assert(not G.skipped(s, "/b/endless.epub"), "a changed file stayed skipped")
+end)
+
+test("only a render that ran for the whole limit counts as timed out", function()
+    assert(G.timedOut(G.RENDER_LIMIT_S + 0.4))
+    assert(not G.timedOut(G.RENDER_LIMIT_S - 5))
+    assert(not G.timedOut(31.4))
+    assert(not G.timedOut(nil))
+    assert(G.timedOut(12, 10) and not G.timedOut(9, 10))
+end)
+
+test("the scan's child sets the deadline before it opens the book, and the scan skips what it ended", function()
+    local m = io.open("main.lua"):read("*a")
+    local at = assert(m:find("G.childDeadline()", 1, true), "no deadline in the child")
+    local open_at = assert(m:find("DocumentRegistry:openDocument(fp)", at, true), "the deadline comes after the open")
+    assert(open_at - at < 600, "the deadline is not in the render child")
+    local t = assert(m:find("elseif Guard.timedOut(elapsed) then", 1, true))
+    assert(m:find("Guard.skip(BookshelfSettings, fp)", t, true))
+end)
+
 test("a failed render's log line: the error, the room it had, what was free", function()
     eq(G.failureNote("not enough memory", 31457280, 62914560), "not enough memory; room 30 MB, free 60 MB")
     eq(G.failureNote(nil, nil, nil), "no count; room ?, free ?")
@@ -121,6 +148,36 @@ test("kernel versions compare by number, not text", function()
     eq(G.kernelAtLeast("4.6.99", 4, 7), false)
     eq(G.kernelAtLeast("10.0", 4, 7), true)
     eq(G.kernelAtLeast("junk", 4, 7), false)
+end)
+
+-- KOReader's DocumentRegistry:openDocument forces two full collections. In
+-- the scan's child that is ~1.2 s a book on a PW5 for nothing: the child has
+-- no earlier document to free and is thrown away after the count.
+test("withoutForcedCollect: a full collection inside is skipped, the rest of collectgarbage works", function()
+    local real, full = collectgarbage, 0
+    _G.collectgarbage = function(opt, ...)
+        if opt == nil or opt == "collect" then full = full + 1 end
+        return real(opt, ...)
+    end
+    local kb
+    local got = G.withoutForcedCollect(function()
+        collectgarbage(); collectgarbage("collect")
+        kb = collectgarbage("count")
+        return "counted"
+    end)
+    local restored = _G.collectgarbage
+    _G.collectgarbage = real
+    eq(got, "counted"); eq(full, 0, "a full collection ran inside")
+    eq(type(kb), "number", "collectgarbage('count') should still answer")
+    restored(); eq(full, 1, "collectgarbage was not put back")
+end)
+
+test("withoutForcedCollect: collectgarbage is put back when the work fails, and the error passes on", function()
+    local real = collectgarbage
+    local ok, err = pcall(G.withoutForcedCollect, function() error("no such book", 0) end)
+    local same = _G.collectgarbage == real
+    _G.collectgarbage = real
+    eq(ok, false); eq(err, "no such book"); eq(same, true, "collectgarbage was left replaced")
 end)
 
 os.execute("rm -rf " .. dir)
