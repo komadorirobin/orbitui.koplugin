@@ -10625,6 +10625,7 @@ local M = {}\
 -- About two Hardcover calls per book that uses the network (find it, then\
 -- fetch its details), and Hardcover allows 60 a minute.\
 M.RATE = 2.5\
+local EDITION_BATCH_SIZE = 25\
 -- Extra goes at a book whose request failed, before it is an error.\
 M.RETRIES = 2\
 -- With Bookshelf's own client Hardcover says on every reply how much of the\
@@ -10653,27 +10654,46 @@ local function nameFor(fp, meta)\
     return (fp:match(\"([^/]+)$\") or fp):gsub(\"%.[^%.]+$\", \"\")\
 end\
 \
--- attempt(fp, best_guess, edition_only) -> outcome, meta, details\
---   \"linked\" | \"nomatch\" | \"noid\" (no request made) | \"error\" (worth retrying)\
-local function attempt(Hardcover, Repo, fp, best_guess, edition_only)\
-    if edition_only then\
-        local book = { filepath = fp }\
-        local existing = Hardcover.getLink(fp)\
-        local needs_relink = Hardcover.needsEmbeddedEditionRelink(book, existing)\
-        if needs_relink == nil then return \"noid\", book end\
-        if not needs_relink then return \"unchanged\", book end\
-        local ok, linked, hc = pcall(Hardcover.linkFromEmbeddedEditionId, book)\
-        if not ok then return \"error\", book end\
-        if not linked then\
-            if hc == \"No Hardcover match found for embedded edition ID\" then return \"nomatch\", book end\
-            return \"error\", book\
+-- Read only one window ahead. Keep the book objects for the resolver so\
+-- each EPUB's OPF is opened once even if the batch service is unavailable.\
+local function prepareEditions(Hardcover, items, first, edition_only, ready)\
+    local batch = { last = math.min(first + EDITION_BATCH_SIZE - 1, #items), books = {} }\
+    local ids, seen = {}, {}\
+    for i = first, batch.last do\
+        if i > first and (i - first) % 5 == 0 then\
+            breathe(0)\
+            if not ready() then return batch end\
         end\
-        local meta = (Repo.buildBookMeta and Repo.buildBookMeta(fp)) or book\
-        return \"linked\", meta, {\
-            title = type(hc) == \"table\" and hc.title or nil,\
-            action = existing and \"corrected\" or \"linked\",\
-        }\
+        local book = { filepath = items[i] }\
+        batch.books[i] = book\
+        local id = Hardcover.getEmbeddedEditionId(book)\
+        if type(id) == \"number\" and id >= 1 and id <= 2147483647 then\
+            local link = Hardcover.getLink(book.filepath)\
+            if not link or (edition_only and tostring(link.edition_id) ~= tostring(id)) then\
+                book.batch_edition_id = id\
+                if not seen[id] then\
+                    ids[#ids + 1] = id\
+                    seen[id] = true\
+                end\
+            end\
+        end\
     end\
+    if #ids > 0 and ready() then\
+        local ok, rows, err = pcall(Hardcover.fetchEditionBatch, ids)\
+        batch.pending_wait = true\
+        if ok and rows then\
+            batch.rows = rows\
+        else\
+            batch.unavailable = true\
+            batch.rate_limited = type(err) == \"table\"\
+                and (err.rate_limited or err.status_code == 429)\
+        end\
+    end\
+    return batch\
+end\
+\
+local function attempt(Hardcover, Repo, book, best_guess, edition_only, edition, before_lookup)\
+    local fp = book.filepath\
     if best_guess then\
         -- Needs title and author, so the record is built first.\
         local meta = (Repo.buildBookMeta and Repo.buildBookMeta(fp)) or { filepath = fp }\
@@ -10686,17 +10706,48 @@ local function attempt(Hardcover, Repo, fp, best_guess, edition_only)\
         end\
         return \"nomatch\", meta\
     end\
-    -- Exact: embedded ISBN / Hardcover id only.\
-    local book = { filepath = fp }\
-    local ids = Hardcover.getEmbeddedIdentifiers and Hardcover.getEmbeddedIdentifiers(book)\
-    if not ids then return \"noid\", book end\
-    local ok_call, linked_ok, hc = pcall(Hardcover.linkFromEmbeddedIdentifiers, book)\
-    if not ok_call then return \"error\", book end\
-    if linked_ok then\
-        local meta = (Repo.buildBookMeta and Repo.buildBookMeta(fp)) or book\
-        return \"linked\", meta, hc\
+    local existing = Hardcover.getLink(fp)\
+    if edition_only then\
+        local needs_relink = Hardcover.needsEmbeddedEditionRelink(book, existing)\
+        if needs_relink == nil then return \"noid\", book end\
+        if not needs_relink then return \"unchanged\", book end\
+    elseif existing then\
+        -- A different action linked this file since the menu took its snapshot.\
+        return \"unchanged\", book\
+    elseif not Hardcover.getEmbeddedIdentifiers(book) then\
+        return \"noid\", book\
     end\
-    return \"nomatch\", book\
+\
+    local ok, linked, hc\
+    if edition then\
+        hc = {\
+            book_id = edition.book.id, edition_id = edition.id,\
+            title = edition.title or edition.book.title, pages = edition.pages,\
+            edition_format = edition.edition_format, reading_format_id = edition.reading_format_id,\
+        }\
+        ok, linked = pcall(Hardcover.linkBook, fp, hc)\
+    else\
+        if not before_lookup() then return \"stopped\", book end\
+        local resolve = edition_only and Hardcover.linkFromEmbeddedEditionId\
+            or Hardcover.linkFromEmbeddedIdentifiers\
+        ok, linked, hc = pcall(resolve, book)\
+    end\
+    if not ok then return \"error\", book end\
+    if not linked then\
+        if edition or (edition_only and hc ~= \"No Hardcover match found for embedded edition ID\") then\
+            return \"error\", book\
+        end\
+        return \"nomatch\", book\
+    end\
+\
+    local meta = (Repo.buildBookMeta and Repo.buildBookMeta(fp)) or book\
+    if edition_only then\
+        return \"linked\", meta, {\
+            title = type(hc) == \"table\" and hc.title or nil,\
+            action = existing and \"corrected\" or \"linked\",\
+        }\
+    end\
+    return \"linked\", meta, hc\
 end\
 \
 -- run{ items = { filepath, ... }, best_guess = bool, shelf = widget or nil,\
@@ -10743,30 +10794,63 @@ function M.run(opts)\
                 breathe(math.max(M.OWN_MIN_WAIT, wait))\
                 return true\
             end\
-            local failed_run = 0\
-            for i, fp in ipairs(items) do\
-                Progress.update{ title = title(i), fraction = (i - 1) / total }\
-                -- Not while a book is open (maintainer: it pauses there and\
-                -- carries on back on the shelf), as Extract page counts. The\
-                -- reader's session is not the pass's to keep awake.\
+            local function ready()\
                 if Progress.reading and Progress.reading() then\
                     Progress.holdAwake(false)\
                     while Progress.reading() and not job.stopped do breathe(2) end\
                     Progress.holdAwake(true)\
                 end\
-                if job.stopped then st.cancelled = true; break end\
+                if job.stopped then st.cancelled = true end\
+                return not job.stopped\
+            end\
+\
+            local batch\
+            local use_batches = not best_guess and Hardcover.fetchEditionBatch ~= nil\
+            -- Pay the batch's single network wait after saving its matches,\
+            -- or before an individual fallback if the response omitted a row.\
+            local function finishRequest()\
+                if batch and batch.pending_wait then\
+                    batch.pending_wait = false\
+                    if not pace() then\
+                        st.cancelled, st.rate_limited = true, true\
+                        return false\
+                    end\
+                end\
+                return ready()\
+            end\
+            local failed_run = 0\
+            for i, fp in ipairs(items) do\
+                Progress.update{ title = title(i), fraction = (i - 1) / total }\
+                if not ready() then break end\
+                if batch and i > batch.last then batch = nil end\
+                if use_batches and not batch then\
+                    batch = prepareEditions(Hardcover, items, i, opts.edition_only, ready)\
+                    if not ready() then break end\
+                    if batch.rate_limited and not own then\
+                        st.cancelled, st.rate_limited = true, true\
+                        break\
+                    end\
+                    if batch.unavailable then use_batches = false end\
+                end\
+                local book = batch and batch.books[i] or { filepath = fp }\
+                local edition = batch and batch.rows and batch.rows[book.batch_edition_id]\
                 st.i = i\
                 local outcome, meta, details\
                 for try = 0, M.RETRIES do\
-                    outcome, meta, details = attempt(Hardcover, Repo, fp, best_guess, opts.edition_only)\
+                    outcome, meta, details = attempt(Hardcover, Repo, book, best_guess,\
+                        opts.edition_only, edition, finishRequest)\
                     if outcome ~= \"error\" or try == M.RETRIES or job.stopped then break end\
-                    if not pace() then break end\
+                    if not edition and not pace() then\
+                        st.cancelled, st.rate_limited = true, true\
+                        break\
+                    end\
                 end\
+                if outcome == \"stopped\" then break end\
                 if outcome == \"linked\" then\
                     st.linked = (st.linked or 0) + 1\
                     -- Details and the cover/description decision now, so the\
                     -- book is complete in one pass.\
-                    pcall(Hardcover.refreshBook, meta, {})\
+                    pcall(Hardcover.refreshBook, meta, { prefetched_edition = edition })\
                     local d = type(details) == \"table\" and details or {}\
                     if d.action then\
                         local key = d.action == \"corrected\" and \"corrected\" or \"new_links\"\
@@ -10797,7 +10881,11 @@ function M.run(opts)\
                 end\
                 -- A book that made no request yields a tick now and then; one\
                 -- that did waits out Hardcover's rate.\
-                if outcome ~= \"noid\" and outcome ~= \"unchanged\" then\
+                if st.rate_limited then break end\
+                if batch and i == batch.last and not finishRequest() then break end\
+                if edition then\
+                    breathe(0)\
+                elseif outcome ~= \"noid\" and outcome ~= \"unchanged\" then\
                     if not pace() then\
                         st.cancelled, st.rate_limited = true, true\
                         break\

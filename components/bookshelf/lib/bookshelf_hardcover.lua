@@ -2381,69 +2381,69 @@ local function _downloadImage(url, key, force)
     return path
 end
 
+-- The batch and the single-book refresh must populate the same cache fields.
+local ENRICH_BOOK_FIELDS = [[
+    id title description cached_image contributions: cached_contributors
+    cached_tags book_series { position series { name } }
+    pages release_year rating ratings_count reviews_count
+]]
+
+-- Returns raw editions keyed by ID. A missing row is retried through the
+-- ordinary resolver; response order and server row limits do not matter.
+function Hardcover.fetchEditionBatch(ids)
+    local Api = _loadApi()
+    if not Api then return nil end
+    local query = [[
+        query ($ids: [Int!]!, $limit: Int!) {
+          editions(where: { id: { _in: $ids }}, limit: $limit) {
+            id title pages cached_image edition_format reading_format_id
+            book { ]] .. ENRICH_BOOK_FIELDS .. [[ }
+          }
+        }
+    ]]
+    local data, err = Api:query(query, { ids = ids, limit = #ids })
+    if err or not data or type(data.editions) ~= "table" then return nil, err end
+    local editions = {}
+    for _, row in ipairs(data.editions) do
+        if type(row) == "table" and tonumber(row.id)
+                and type(row.book) == "table" and tonumber(row.book.id) then
+            editions[tonumber(row.id)] = row
+        end
+    end
+    return editions
+end
+
+local function _queryBookEnrichment(Api, book_id, edition_id)
+    if edition_id then
+        return Api:query([[
+            query ($bookId: Int!, $editionId: Int!) {
+              book: books_by_pk(id: $bookId) { ]] .. ENRICH_BOOK_FIELDS .. [[ }
+              edition: editions_by_pk(id: $editionId) { id title cached_image pages }
+            }
+        ]], { bookId = book_id, editionId = edition_id })
+    end
+    return Api:query([[
+        query ($bookId: Int!) {
+          book: books_by_pk(id: $bookId) { ]] .. ENRICH_BOOK_FIELDS .. [[ }
+        }
+    ]], { bookId = book_id })
+end
+
 local function _fetchBookEnrichment(book_id, edition_id, opts)
     opts = opts or {}
-    local Api, api_err = _loadApi()
-    if not Api then return false, api_err end
     book_id = tonumber(book_id) or book_id
     edition_id = tonumber(edition_id) or edition_id
     if not book_id then return false, "Missing Hardcover book id" end
 
     local data, err
-    if edition_id then
-        local query = [[
-            query ($bookId: Int!, $editionId: Int!) {
-              book: books_by_pk(id: $bookId) {
-                id
-                title
-                description
-                cached_image
-                contributions: cached_contributors
-                cached_tags
-                book_series { position series { name } }
-                pages
-                release_year
-                rating
-                ratings_count
-                reviews_count
-              }
-              edition: editions_by_pk(id: $editionId) {
-                id
-                title
-                cached_image
-                pages
-              }
-            }
-        ]]
-        local ok_query
-        ok_query, data, err = pcall(Api.query, Api, query, {
-            bookId = book_id,
-            editionId = edition_id,
-        })
-        if not ok_query then
-            return false, "Hardcover enrichment failed: " .. _errString(data)
-        end
+    local row = opts.prefetched_edition
+    if row and tonumber(row.id) == edition_id and tonumber(row.book.id) == book_id then
+        data = { edition = row, book = row.book }
     else
-        local query = [[
-            query ($bookId: Int!) {
-              book: books_by_pk(id: $bookId) {
-                id
-                title
-                description
-                cached_image
-                contributions: cached_contributors
-                cached_tags
-                book_series { position series { name } }
-                pages
-                release_year
-                rating
-                ratings_count
-                reviews_count
-              }
-            }
-        ]]
+        local Api, api_err = _loadApi()
+        if not Api then return false, api_err end
         local ok_query
-        ok_query, data, err = pcall(Api.query, Api, query, { bookId = book_id })
+        ok_query, data, err = pcall(_queryBookEnrichment, Api, book_id, edition_id)
         if not ok_query then
             return false, "Hardcover enrichment failed: " .. _errString(data)
         end

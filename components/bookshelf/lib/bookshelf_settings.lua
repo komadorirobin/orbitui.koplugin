@@ -3813,7 +3813,7 @@ function Settings:_hardcoverSubItems()
                     corrected = st.corrected or 0,
                     already_correct = st.already_correct or 0,
                     cancelled  = st.cancelled,
-                    why        = (st.rate_limited and _("Hardcover's request limit for today was reached. Run it again tomorrow to carry on."))
+                    why        = (st.rate_limited and _("Hardcover's request limit was reached. Try again later to continue linking."))
                               or (st.gave_up and _("Stopped after three books in a row could not be looked up. Check the connection and run it again."))
                               or nil,
                     linked     = st.linked_list or {},

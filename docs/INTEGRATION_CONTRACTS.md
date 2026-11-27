@@ -480,6 +480,9 @@ Bookshelf's Hardcover integration supplies linking, edition identity and cached
 enrichment/ratings. Preserve incremental linking of unlinked files as distinct
 from intentionally relinking the whole library. Do not clear links, editions or
 user display choices as a side effect of merging or refreshing metadata.
+Bulk linking by embedded edition ID fetches up to 25 editions and their book
+details per request. Apply results by edition ID. Omitted rows use the normal
+single-book resolver. A rescan of correct links uses only local metadata.
 
 On Android, an accepted remote progress prompt must close before its navigation
 callback runs; discard callbacks for a closed/replaced reader. The workaround

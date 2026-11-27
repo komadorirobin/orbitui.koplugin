@@ -93,6 +93,7 @@ local sv = {
     ["Auto-link all books"] = "Länka alla olänkade böcker automatiskt",
     ["Best guess (title & author)"] = "Bästa träff (titel och författare)",
     ["Exact match (ISBN / Hardcover id)"] = "Exakt träff (ISBN eller Hardcover-ID)",
+    ["Hardcover's request limit was reached. Try again later to continue linking."] = "Hardcovers gräns för antal förfrågningar nåddes. Försök igen senare för att fortsätta länka.",
     ["Hardcover's request limit for today was reached. Run it again tomorrow to carry on."] = "Hardcovers gräns för antal förfrågningar nåddes. Kör igen i morgon för att fortsätta.",
     ["Not connected to Hardcover"] = "Ingen anslutning till Hardcover",
     ["Stopped after three books in a row could not be looked up. Check the connection and run it again."] = "Sökningen avbröts efter tre misslyckade uppslag i rad. Kontrollera anslutningen och försök igen.",

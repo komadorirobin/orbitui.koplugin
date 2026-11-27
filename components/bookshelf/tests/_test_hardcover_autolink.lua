@@ -52,6 +52,7 @@ package.loaded["lib/bookshelf_scan_progress"] = {
 
 -- Hardcover, scripted per file: a list of results, one per attempt.
 local script, calls, refreshed, links, edition_ids
+local batch_calls, batch_lookup, used_editions
 local function nextResult(fp)
     calls[fp] = (calls[fp] or 0) + 1
     local list = script[fp] or { { false, "no_match" } }
@@ -75,12 +76,22 @@ package.loaded["lib/bookshelf_hardcover"] = {
         return not book.filepath:find("noid", 1, true) and "isbn:1" or nil
     end,
     getLink = function(fp) return links[fp] end,
+    getEmbeddedEditionId = function(book) return edition_ids[book.filepath] end,
+    fetchEditionBatch = function(ids)
+        batch_calls[#batch_calls + 1] = ids
+        return batch_lookup(ids)
+    end,
+    linkBook = function(fp, link) links[fp] = link; return true end,
     needsEmbeddedEditionRelink = function(book, link)
         local edition = edition_ids[book.filepath]
         if edition then return not link or link.edition_id ~= edition end
     end,
     linkFromEmbeddedEditionId = function(book) return nextResult(book.filepath) end,
-    refreshBook = function(meta) refreshed[#refreshed + 1] = meta.filepath; return true end,
+    refreshBook = function(meta, opts)
+        refreshed[#refreshed + 1] = meta.filepath
+        used_editions[meta.filepath] = opts.prefetched_edition
+        return true
+    end,
 }
 package.loaded["lib/bookshelf_book_repository"] = {
     buildBookMeta = function(fp) return { filepath = fp, title = "T " .. fp } end,
@@ -103,7 +114,8 @@ local function reset()
     script, active, stop_at, reading = {}, false, nil, nil
     source, wait_time, trap_seen = "hardcover", 0, nil
     OwnClient.trap = nil
-    links, edition_ids = {}, {}
+    links, edition_ids, batch_calls, used_editions = {}, {}, {}, {}
+    batch_lookup = function() return {} end
 end
 
 t.test("best guess: linked, no match and errors are told apart", function()
@@ -290,6 +302,83 @@ t.test("embedded edition repair skips correct links and reports repaired and new
     eq(done.no_id, 1)
     eq(done.no_match, 1)
     eq(table.concat(refreshed, ","), "wrong,new,retry")
+end)
+
+local function exactRows(ids)
+    local rows = {}
+    for _, id in ipairs(ids) do rows[id] = { id = id, book = { id = 2000 + id } } end
+    return rows
+end
+
+t.test("1,000 exact editions share lookup, details and pacing; rechecking needs no requests", function()
+    for _, edition_only in ipairs({ true, false }) do
+        reset()
+        local items = {}
+        for i = 1, 1000 do
+            local fp = "book" .. i
+            items[i], edition_ids[fp] = fp, i
+        end
+        batch_lookup = exactRows
+        run(items, false, edition_only)
+        eq(done.linked, 1000); eq(#batch_calls, 40)
+        eq(next(calls), nil, "unexpected single-book lookup")
+        eq(#refreshed, 1000)
+        local seconds = 0
+        for _, wait in ipairs(waits) do seconds = seconds + wait end
+        eq(seconds, 100)
+        for i, fp in ipairs(items) do
+            eq(links[fp].book_id, 2000 + i)
+            eq(used_editions[fp].id, i)
+        end
+        batch_calls = {}
+        run(items, false, true)
+        eq(done.already_correct, 1000); eq(#batch_calls, 0); eq(next(calls), nil)
+        for _, wait in ipairs(waits) do eq(wait, 0) end
+    end
+end)
+
+t.test("batch repair deduplicates IDs and falls back only for the omitted edition", function()
+    reset()
+    edition_ids = { a = 7, b = 7, c = 8, d = 9 }
+    links = { a = { edition_id = 12 }, d = { edition_id = 9 } }
+    batch_lookup = function(ids)
+        eq(table.concat(ids, ","), "7,8")
+        return exactRows({ 7 })
+    end
+    script.c = { { true, { title = "single match" } } }
+    run({ "a", "b", "c", "d", "noid" }, false, true)
+    eq(#batch_calls, 1); eq(calls.c, 1); eq(calls.a, nil); eq(calls.b, nil)
+    eq(done.corrected, 1); eq(done.new_links, 2); eq(done.already_correct, 1); eq(done.no_id, 1)
+    eq(used_editions.a.id, 7); eq(used_editions.b.id, 7); eq(used_editions.c, nil)
+end)
+
+t.test("an unsupported bulk query falls back for the run, including ISBN-only files", function()
+    reset()
+    local items = { "isbn" }
+    script.isbn = { { true, { title = "ISBN" } } }
+    for i = 1, 30 do
+        local fp = "edition" .. i
+        items[#items + 1], edition_ids[fp], script[fp] = fp, i, { { true, { title = fp } } }
+    end
+    batch_lookup = function() error("query unsupported") end
+    run(items, false)
+    eq(done.linked, 31); eq(#batch_calls, 1)
+    for _, fp in ipairs(items) do eq(calls[fp], 1); eq(used_editions[fp], nil) end
+end)
+
+t.test("Stop and a rate limit during batch lookup preserve existing links", function()
+    reset()
+    edition_ids = { a = 7 }
+    links = { a = { edition_id = 8 } }
+    batch_lookup = function(ids) job.stopped = true; return exactRows(ids) end
+    run({ "a" }, false, true)
+    eq(done.cancelled, true); eq(#refreshed, 0); eq(links.a.edition_id, 8)
+    batch_lookup = function() return nil, {status_code=429} end
+    run({ "a" }, false, true)
+    eq(done.rate_limited, true); eq(calls.a, nil); eq(links.a.edition_id, 8)
+    source, wait_time = "own", 3600
+    run({ "a" }, false, true)
+    eq(done.rate_limited, true); eq(calls.a, nil); eq(links.a.edition_id, 8)
 end)
 
 t.test("the bulk jobs wait for a connection first", function()

@@ -416,6 +416,42 @@ test("refreshBook writes cache from Hardcover API", function()
     assert(book.description == "Fresh Hardcover description.", tostring(book.description))
 end)
 
+test("batch editions reuse the single-book enrichment cache and check both IDs", function()
+    reset()
+    local api = package.loaded["hardcover/lib/hardcover_api"]
+    local query = api.query
+    local batch_calls, single_calls = 0, 0
+    api.query = function(self, q, v)
+        if not v.ids then
+            single_calls = single_calls + 1
+            return query(self, q, v)
+        end
+        batch_calls = batch_calls + 1
+        assert(v.limit == 2 and q:find("_in: $ids", 1, true))
+        return { editions = {
+            { id = 457, book = { id = 124 } },
+            { id = 456, pages = 298, title = "Edition", book = { id = 123, title = "Work",
+                rating = 4.5, description = "Description", release_year = 1975, pages = 201 } },
+            { id = 999, book = false },
+        } }
+    end
+    local ok, err = pcall(function()
+        local rows = Hardcover.fetchEditionBatch({456, 457})
+        assert(rows[999] == nil and rows[457].book.id == 124)
+        local book = {filepath = "/books/a.epub"}
+        assert(Hardcover.refreshBook(book, {prefetched_edition = rows[456]}))
+        local saved = Hardcover.getCachedEnrichment(123, 456)
+        assert(saved.title == "Edition" and saved.pages == 298 and saved.published_year == 1975)
+        assert(saved.rating == 4.5 and saved.description == "Description" and single_calls == 0)
+        assert(Hardcover.refreshBook(book, {prefetched_edition = rows[457]}))
+        rows[456].book.id = 888
+        assert(Hardcover.refreshBook(book, {prefetched_edition = rows[456]}))
+        assert(single_calls == 2 and batch_calls == 1)
+    end)
+    api.query = query
+    assert(ok, err)
+end)
+
 test("refreshBookOnline uses KOReader network manager when available", function()
     reset()
     local network_called = false
