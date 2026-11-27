@@ -2,6 +2,19 @@
 
 ## OrbitUI 1.5.0-beta.6
 
+Published on 2026-11-27T16:47:57Z as GitHub prerelease 460851604
+from **a3685c3c9**. The 10,546,154-byte ZIP and its checksum
+matched the draft and local build. SHA-256 is
+`8638e0b15ce3677cbe19215acbd6b98eac56c31c3624c0593e946e842682715b`. GitHub Latest and the stable updater both offer 1.4.0.
+
+Both interpreter jobs passed on [main](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/46035986532)
+and the [release tag](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/46036015595).
+All four CI archives matched the 1,998 installed files and executable bits.
+KOReader’s preview updater on 1.4.0 and 1.5.0-beta.5 discovered the release
+over anonymous HTTPS, installed the public bytes, restarted and rolled back.
+The Swedish edition rescan in the release ZIP handled all four EPUB test cases
+on the Tolino Vision Color emulator using simulated Hardcover responses.
+
 The Hardcover edition rescan checks the whole library. It compares edition
 IDs locally, looks up missing or mismatched links and reports the result.
 First-time bulk linking can take hours on a large library. This beta also
