@@ -10684,9 +10684,13 @@ local function prepareEditions(Hardcover, items, first, edition_only, ready)\
         if ok and rows then\
             batch.rows = rows\
         else\
-            batch.unavailable = true\
-            batch.rate_limited = type(err) == \"table\"\
-                and (err.rate_limited or err.status_code == 429)\
+            local status = type(err) == \"table\" and tonumber(err.status_code)\
+            batch.rate_limited = type(err) == \"table\" and (err.rate_limited or status == 429)\
+            -- A tap can interrupt a borrowed client's request. Retry batching\
+            -- on the next window after a transport error or temporary limit.\
+            local transient = type(err) == \"table\"\
+                and (err.completed == false or batch.rate_limited or (status and status >= 500))\
+            batch.unavailable = not transient\
         end\
     end\
     return batch\

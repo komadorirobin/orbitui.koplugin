@@ -366,6 +366,22 @@ t.test("an unsupported bulk query falls back for the run, including ISBN-only fi
     for _, fp in ipairs(items) do eq(calls[fp], 1); eq(used_editions[fp], nil) end
 end)
 
+t.test("a temporary batch interruption does not force the rest of the library into single lookups", function()
+    reset()
+    local items = {}
+    for i = 1, 26 do
+        local fp = "book" .. i
+        items[i], edition_ids[fp], script[fp] = fp, i, { { true, { title = fp } } }
+    end
+    batch_lookup = function(ids)
+        if #batch_calls == 1 then return nil, { completed = false } end
+        return exactRows(ids)
+    end
+    run(items, false, true)
+    eq(done.linked, 26); eq(#batch_calls, 2)
+    eq(calls.book25, 1); eq(calls.book26, nil); eq(used_editions.book26.id, 26)
+end)
+
 t.test("Stop and a rate limit during batch lookup preserve existing links", function()
     reset()
     edition_ids = { a = 7 }
