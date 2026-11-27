@@ -1,5 +1,12 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.5.0-beta.7
+
+Bulk linking now looks up as many as 25 explicit Hardcover edition IDs in
+one request and reuses the returned book details. The full-library rescan
+skips network lookups for matching links. See [the timing measurements](TESTING.md)
+for the first pass and the repeat scan.
+
 ## OrbitUI 1.5.0-beta.6
 
 Published on 2026-11-27T16:47:57Z as GitHub prerelease 460851604

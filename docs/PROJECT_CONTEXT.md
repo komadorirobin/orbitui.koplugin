@@ -20,6 +20,14 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
+## OrbitUI 1.5.0-beta.7, 2026-11-27
+
+Hardcover bulk linking groups explicit edition IDs in batches of up to 25.
+Rows are matched by ID and include book details. A missing row falls back
+to the individual resolver. After a temporary failure, subsequent groups
+can use batching again. Matching links are checked locally on a rescan.
+The [emulator measurements](TESTING.md) cover 25 and 1,000 EPUBs.
+
 ## OrbitUI 1.5.0-beta.6, 2026-11-27
 
 The Hardcover edition rescan now checks existing links across the library.
